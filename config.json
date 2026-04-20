@@ -1,0 +1,21 @@
+{
+  "monitoring": {
+    "check_interval_days": 1,
+    "priority_threshold_days": 7,
+    "warning_threshold_days": 30,
+    "notification_enabled": true,
+    "whatsapp_numbers": [
+      "+628159153720"
+    ]
+  },
+  "web_server": {
+    "port": 8081,
+    "host": "0.0.0.0",
+    "auto_refresh_seconds": 30
+  },
+  "data": {
+    "source_file": "",
+    "backup_enabled": true,
+    "backup_dir": "/root/stnk_monitoring/data/backups"
+  }
+}

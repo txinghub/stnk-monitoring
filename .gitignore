@@ -1,0 +1,31 @@
+# Backup files
+*.tar.gz
+*.zip
+
+# Log files
+*.log
+server.log
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment
+.env
+venv/
+env/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup directories
+backups/
+web_dashboard_new/backups/
+
+# Temporary files
+tmp/
+temp/

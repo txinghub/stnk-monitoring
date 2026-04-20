@@ -1,0 +1,52 @@
+[
+  {
+    "no_polisi": "B 1234 ABC",
+    "jenis_kendaraan": "Mobil",
+    "merk": "Toyota Avanza",
+    "pemilik": "PT. Contoh Sejahtera",
+    "tgl_jatuh_tempo": "2026-04-25",
+    "status": "priority",
+    "hari_menuju_jatuh_tempo": 6,
+    "warna_status": "danger"
+  },
+  {
+    "no_polisi": "B 5678 XYZ",
+    "jenis_kendaraan": "Mobil",
+    "merk": "Honda CR-V",
+    "pemilik": "CV. Mandiri Jaya",
+    "tgl_jatuh_tempo": "2026-05-15",
+    "status": "warning",
+    "hari_menuju_jatuh_tempo": 26,
+    "warna_status": "warning"
+  },
+  {
+    "no_polisi": "B 9012 DEF",
+    "jenis_kendaraan": "Motor",
+    "merk": "Honda Beat",
+    "pemilik": "Individu",
+    "tgl_jatuh_tempo": "2026-07-10",
+    "status": "safe",
+    "hari_menuju_jatuh_tempo": 82,
+    "warna_status": "success"
+  },
+  {
+    "no_polisi": "B 3456 GHI",
+    "jenis_kendaraan": "Mobil",
+    "merk": "Mitsubishi Pajero",
+    "pemilik": "PT. Abadi Makmur",
+    "tgl_jatuh_tempo": "2026-04-28",
+    "status": "priority",
+    "hari_menuju_jatuh_tempo": 9,
+    "warna_status": "danger"
+  },
+  {
+    "no_polisi": "B 7890 JKL",
+    "jenis_kendaraan": "Truk",
+    "merk": "Hino Dutro",
+    "pemilik": "CV. Logistik Cepat",
+    "tgl_jatuh_tempo": "2026-06-01",
+    "status": "safe",
+    "hari_menuju_jatuh_tempo": 43,
+    "warna_status": "success"
+  }
+]
