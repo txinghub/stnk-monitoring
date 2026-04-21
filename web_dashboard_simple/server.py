@@ -5,7 +5,7 @@ import json
 import os
 from datetime import datetime
 
-PORT = 8084
+PORT = 8086
 WEB_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(WEB_DIR, 'data.json')
 

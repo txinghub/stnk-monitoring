@@ -195,9 +195,7 @@
             #vehicleTable td:nth-child(9), /* Pemilik */
             #vehicleTable th:nth-child(9),
             #vehicleTable td:nth-child(10), /* Catatan */
-            #vehicleTable th:nth-child(10),
-            #vehicleTable td:nth-child(11), /* Aksi */
-            #vehicleTable th:nth-child(11) {
+            #vehicleTable th:nth-child(10) {
                 display: none;
             }
         }
@@ -233,11 +231,6 @@
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <a class="nav-link active" href="#"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <button class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#addVehicleModal">
-                            <i class="bi bi-plus-circle me-1"></i> TAMBAH KENDARAAN
-                        </button>
                     </li>
                     <li class="nav-item">
                         <button class="btn btn-update ms-2" data-bs-toggle="modal" data-bs-target="#updateModal">
@@ -407,92 +400,6 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     <button type="button" class="btn btn-update" onclick="submitUpdate()">
                         <i class="bi bi-check-circle me-1"></i> Update Data
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Vehicle Modal -->
-    <div class="modal fade" id="addVehicleModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-success text-white">
-                    <h5 class="modal-title">
-                        <i class="bi bi-plus-circle me-2"></i> Tambah Kendaraan Baru
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addVehicleForm">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Merk Kendaraan <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="addMerk" placeholder="Contoh: HONDA NF" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">No Polisi <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="addNoPolisi" placeholder="Contoh: BK 1234 ABC" required>
-                                    <small class="text-muted">Format: BK 1234 ABC (gunakan spasi)</small>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Kategori <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="addKategori" required>
-                                        <option value="">Pilih kategori...</option>
-                                        <option value="Roda Dua">Roda Dua</option>
-                                        <option value="Roda Tiga">Roda Tiga</option>
-                                        <option value="Roda Empat">Roda Empat</option>
-                                        <option value="Truk">Truk</option>
-                                        <option value="Bus">Bus</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Pemilik</label>
-                                    <input type="text" class="form-control" id="addPemilik" placeholder="Nama pemilik kendaraan">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Tanggal STNK <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="addStnkDate" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Tanggal Pajak <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="addPajakDate" required>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Catatan</label>
-                            <textarea class="form-control" id="addCatatan" rows="2" placeholder="Tambahkan catatan jika perlu..."></textarea>
-                        </div>
-                        
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle me-2"></i>
-                            Data akan langsung ditambahkan ke sistem dan muncul di tabel monitoring.
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-success" onclick="submitAddVehicle()">
-                        <i class="bi bi-check-circle me-1"></i> Simpan Kendaraan
                     </button>
                 </div>
             </div>
