@@ -30,6 +30,16 @@ def calculate_status(days):
 def get_status_info(vehicle):
     """Get status information for vehicle"""
     today = datetime.now().date()
+    
+    # Handle null dates
+    if vehicle['stnk_date'] is None or vehicle['pajak_date'] is None:
+        return {
+            'days': None,
+            'status': 'DATA TIDAK LENGKAP',
+            'color': 'secondary',
+            'icon': '❓'
+        }
+    
     stnk_date = datetime.strptime(vehicle['stnk_date'], '%Y-%m-%d').date()
     pajak_date = datetime.strptime(vehicle['pajak_date'], '%Y-%m-%d').date()
     
