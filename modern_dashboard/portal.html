@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STNK Dashboard Portal - All Access Links</title>
+    
+    <!-- Bootstrap 5 Dark Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+        }
+        
+        body {
+            background: var(--dark-bg);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .hero-section {
+            background: var(--primary-gradient);
+            padding: 4rem 2rem;
+            border-radius: 1rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        
+        .dashboard-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .badge-premium {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: #000;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+        }
+        
+        .access-link {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+        }
+        
+        .copy-btn {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            color: #667eea;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #667eea;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 2rem 0;
+        }
+        
+        .server-info {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="bi bi-speedometer2"></i>
+                STNK DASHBOARD PORTAL
+            </h1>
+            <p class="lead mb-0">
+                Akses semua dashboard monitoring kendaraan dari satu tempat
+            </p>
+        </div>
+        
+        <!-- Server Information -->
+        <div class="server-info mb-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <strong><i class="bi bi-server"></i> Server Info:</strong><br>
+                    <small>Tailscale IP: 100.121.49.116</small><br>
+                    <small>Server: openclaw-hermes</small>
+                </div>
+                <div class="col-md-6">
+                    <strong><i class="bi bi-shield-check"></i> Security:</strong><br>
+                    <small>End-to-end encrypted via Tailscale</small><br>
+                    <small>Access restricted to authorized users</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modern Dashboard (TIDAL Style) -->
+        <div class="dashboard-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="mb-0">
+                    <i class="bi bi-stars text-warning"></i>
+                    Dashboard Modern - TIDAL Style
+                </h3>
+                <span class="badge-premium">PREMIUM</span>
+            </div>
+            
+            <p class="text-muted mb-3">
+                Dashboard paling modern dengan desain TIDAL style, animasi halus, gradient effects, dan fitur premium lengkap.
+            </p>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="bi bi-check-circle text-success"></i> Fitur Utama:</h5>
+                    <ul>
+                        <li>Desain TIDAL dark blue gradient</li>
+                        <li>Animasi AOS & hover effects</li>
+                        <li>Charts interaktif dengan tooltips</li>
+                        <li>Sidebar navigation fixed</li>
+                        <li>Dark/light mode toggle</li>
+                        <li>Export data ke CSV</li>
+                        <li>Auto-refresh 30 detik</li>
+                        <li>Mobile responsive</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h5><i class="bi bi-link-45deg"></i> Access Links:</h5>
+                    
+                    <div class="access-link">
+                        <strong>Tailscale (Remote Access):</strong><br>
+                        http://100.121.49.116:8087
+                    </div>
+                    
+                    <div class="access-link">
+                        <strong>Local Network:</strong><br>
+                        http://localhost:8087
+                    </div>
+                    
+                    <button class="copy-btn w-100 mb-3" onclick="copyToClipboard('http://100.121.49.116:8087')">
+                        <i class="bi bi-clipboard"></i> Copy Tailscale Link
+                    </button>
+                    
+                    <a href="http://100.121.49.116:8087" target="_blank" class="btn btn-primary w-100">
+                        <i class="bi bi-box-arrow-up-right"></i> Open Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Other Dashboards -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h4><i class="bi bi-speedometer"></i> Dashboard Sederhana</h4>
+                    <p class="text-muted">Versi clean design untuk monitoring cepat</p>
+                    
+                    <div class="access-link">
+                        http://100.121.49.116:8084
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button class="copy-btn flex-grow-1" onclick="copyToClipboard('http://100.121.49.116:8084')">
+                            Copy
+                        </button>
+                        <a href="http://100.121.49.116:8084" target="_blank" class="btn btn-outline-primary">
+                            Open
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="dashboard-card">
+                    <h4><i class="bi bi-bar-chart"></i> Dashboard Lengkap</h4>
+                    <p class="text-muted">Versi full features dengan semua fitur</p>
+                    
+                    <div class="access-link">
+                        http://100.121.49.116:8085
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button class="copy-btn flex-grow-1" onclick="copyToClipboard('http://100.121.49.116:8085')">
+                            Copy
+                        </button>
+                        <a href="http://100.121.49.116:8085" target="_blank" class="btn btn-outline-primary">
+                            Open
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Access Instructions -->
+        <div class="instructions">
+            <h4><i class="bi bi-info-circle"></i> Cara Akses Dashboard</h4>
+            
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <h5>Via Tailscale (Remote Access):</h5>
+                    <ol>
+                        <li>Install Tailscale di device Anda</li>
+                        <li>Login dengan akun yang di-share</li>
+                        <li>Pastikan status "Connected"</li>
+                        <li>Buka link Tailscale di browser</li>
+                        <li>Dashboard akan muncul otomatis</li>
+                    </ol>
+                </div>
+                
+                <div class="col-md-6">
+                    <h5>Via Local Network:</h5>
+                    <ol>
+                        <li>Device harus dalam jaringan yang sama</li>
+                        <li>Buka link localhost atau local IP</li>
+                        <li>Tidak perlu Tailscale</li>
+                        <li>Hanya bisa diakses dari jaringan lokal</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="alert alert-warning mt-3">
+                <i class="bi bi-exclamation-triangle"></i>
+                <strong>Peringatan Keamanan:</strong> Hanya share link dengan orang yang diizinkan. 
+                Dashboard dilindungi oleh Tailscale VPN end-to-end encryption.
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="dashboard-card text-center">
+            <h4><i class="bi bi-lightning-charge"></i> Quick Actions</h4>
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <button class="btn btn-outline-info w-100" onclick="copyAllLinks()">
+                        <i class="bi bi-clipboard-data"></i> Copy All Links
+                    </button>
+                </div>
+                <div class="col-md-4">
+                    <a href="whatsapp://send?text=STNK Dashboard Links:%0A%0AModern: http://100.121.49.116:8087%0ASimple: http://100.121.49.116:8084%0AComplete: http://100.121.49.116:8085" 
+                       class="btn btn-outline-success w-100">
+                        <i class="bi bi-whatsapp"></i> Share via WhatsApp
+                    </a>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-outline-warning w-100" onclick="checkServerStatus()">
+                        <i class="bi bi-heart-pulse"></i> Check Server Status
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="text-center text-muted mt-5">
+            <p class="mb-0">
+                <small>
+                    <i class="bi bi-c-circle"></i> 2026 STNK Monitoring System | 
+                    Server: openclaw-hermes | Tailscale IP: 100.121.49.116
+                </small>
+            </p>
+            <p class="mb-0">
+                <small>
+                    Last updated: <span id="currentTime"></span>
+                </small>
+            </p>
+        </footer>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'Asia/Jakarta'
+            };
+            document.getElementById('currentTime').textContent = now.toLocaleDateString('id-ID', options);
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Link copied to clipboard: ' + text);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+        
+        // Copy all links
+        function copyAllLinks() {
+            const links = [
+                'MODERN DASHBOARD (TIDAL Style):',
+                'http://100.121.49.116:8087',
+                '',
+                'SIMPLE DASHBOARD:',
+                'http://100.121.49.116:8084',
+                '',
+                'COMPLETE DASHBOARD:',
+                'http://100.121.49.116:8085',
+                '',
+                'Tailscale IP: 100.121.49.116',
+                'Server: openclaw-hermes'
+            ].join('\n');
+            
+            copyToClipboard(links);
+        }
+        
+        // Check server status
+        function checkServerStatus() {
+            const dashboards = [
+                { name: 'Modern Dashboard', url: 'http://100.121.49.116:8087/api/health' },
+                { name: 'Simple Dashboard', url: 'http://100.121.49.116:8084/api/health' },
+                { name: 'Complete Dashboard', url: 'http://100.121.49.116:8085/api/health' }
+            ];
+            
+            let statusMessage = '🔍 Checking server status...\n\n';
+            
+            dashboards.forEach(dashboard => {
+                fetch(dashboard.url)
+                    .then(response => response.json())
+                    .then(data => {
+                        statusMessage += `✅ ${dashboard.name}: ${data.status || 'healthy'}\n`;
+                    })
+                    .catch(error => {
+                        statusMessage += `❌ ${dashboard.name}: offline\n`;
+                    })
+                    .finally(() => {
+                        if (dashboard.name === 'Complete Dashboard') {
+                            alert(statusMessage);
+                        }
+                    });
+            });
+        }
+        
+        // Auto theme based on system preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+            document.documentElement.setAttribute('data-bs-theme', 'light');
+        }
+    </script>
+</body>
+</html>

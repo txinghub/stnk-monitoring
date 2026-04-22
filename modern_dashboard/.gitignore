@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Secrets
+.env
+*.key
+*.pem
+*.crt
+
+# Logs
+*.log
+logs/
+server.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Backups
+backups/
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Data files (large)
+*.xlsx
+*.csv
+*.sqlite
+*.db

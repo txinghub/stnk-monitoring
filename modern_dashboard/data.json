@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "merk": "HONDA CS 1",
+    "no_polisi": "BK 2302 WAM",
+    "kategori": "Roda Dua",
+    "stnk_date": "2026-05-06",
+    "pajak_date": "2026-05-06",
+    "ktp": "LINGGO THIO PUTRO",
+    "catatan": "STNK dan Pajak sama tanggal"
+  },
+  {
+    "id": 2,
+    "merk": "TOYOTA AVANZA",
+    "no_polisi": "B 1234 ABC",
+    "kategori": "Roda Empat",
+    "stnk_date": "2026-08-15",
+    "pajak_date": "2026-07-20",
+    "ktp": "JOHN DOE",
+    "catatan": "Pajak lebih dulu dari STNK"
+  },
+  {
+    "id": 3,
+    "merk": "SUZUKI SATRIA",
+    "no_polisi": "F 5678 XYZ",
+    "kategori": "Roda Dua",
+    "stnk_date": "2026-03-10",
+    "pajak_date": "2026-03-10",
+    "ktp": "JANE SMITH",
+    "catatan": "Segera diperpanjang"
+  },
+  {
+    "id": 4,
+    "merk": "MITSUBISHI PAJERO",
+    "no_polisi": "B 9876 DEF",
+    "kategori": "Roda Empat",
+    "stnk_date": "2026-12-01",
+    "pajak_date": "2026-11-15",
+    "ktp": "ROBERT BROWN",
+    "catatan": "Masih lama"
+  },
+  {
+    "id": 5,
+    "merk": "YAMAHA NMAX",
+    "no_polisi": "BK 1122 EFG",
+    "kategori": "Roda Dua",
+    "stnk_date": "2026-01-30",
+    "pajak_date": "2026-01-30",
+    "ktp": "ALICE WONDER",
+    "catatan": "Prioritas tinggi"
+  },
+  {
+    "id": 6,
+    "merk": "DAIHATSU XENIA",
+    "no_polisi": "B 3344 GHI",
+    "kategori": "Roda Empat",
+    "stnk_date": "2026-09-25",
+    "pajak_date": "2026-09-25",
+    "ktp": "MICHAEL JACKSON",
+    "catatan": "Tanggal sama"
+  },
+  {
+    "id": 7,
+    "merk": "KAWASAKI NINJA",
+    "no_polisi": "BK 5566 JKL",
+    "kategori": "Roda Dua",
+    "stnk_date": "2026-06-18",
+    "pajak_date": "2026-06-18",
+    "ktp": "DAVID BECKHAM",
+    "catatan": "Motor sport"
+  },
+  {
+    "id": 8,
+    "merk": "HONDA BRIO",
+    "no_polisi": "B 7788 MNO",
+    "kategori": "Roda Empat",
+    "stnk_date": "2026-04-05",
+    "pajak_date": "2026-04-05",
+    "ktp": "SARAH CONNOR",
+    "catatan": "Mobil kecil"
+  },
+  {
+    "id": 9,
+    "merk": "YAMAHA VIXION",
+    "no_polisi": "F 9900 PQR",
+    "kategori": "Roda Dua",
+    "stnk_date": "2026-10-30",
+    "pajak_date": "2026-10-30",
+    "ktp": "TONY STARK",
+    "catatan": "Motor keren"
+  },
+  {
+    "id": 10,
+    "merk": "TOYOTA FORTUNER",
+    "no_polisi": "B 1122 STU",
+    "kategori": "Roda Empat",
+    "stnk_date": "2026-02-28",
+    "pajak_date": "2026-02-28",
+    "ktp": "BRUCE WAYNE",
+    "catatan": "SUV mewah"
+  }
+]
