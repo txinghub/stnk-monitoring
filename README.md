@@ -4,30 +4,18 @@ Sistem monitoring STNK dan Pajak kendaraan dengan dashboard modern.
 
 ## 📊 Dashboard Versi
 
-### 1. Dashboard Lengkap (Port 8085) 
-- **Design**: Professional dengan Bootstrap 5
-- **Fitur**: Chart.js, DataTables, Update Modal, Backup otomatis
-- **Teknologi**: Bootstrap 5, Chart.js, DataTables, Python API
-- **Link**: http://localhost:8085
-
-### 2. Dashboard Modern (Port 8087)
+### 1. Dashboard Modern (Port 8087)
 - **Design**: TIDAL-style premium dashboard
 - **Fitur**: Dark/light mode, animations, export CSV, responsive
 - **Teknologi**: Modern CSS, JavaScript, Python server
 - **Link**: http://localhost:8087
 
-### 3. Dashboard Portal (Port 8099)
+### 2. Dashboard Portal (Port 8099)
 - **Design**: Portal untuk semua dashboard links
 - **Fitur**: Semua link dalam satu halaman
 - **Link**: http://localhost:8099
 
 ## 🚀 Instalasi & Menjalankan
-
-### Dashboard Lengkap (8085):
-```bash
-cd web_dashboard_new
-python3 server.py
-```
 
 ### Dashboard Modern (8087):
 ```bash
@@ -53,89 +41,63 @@ stnk_monitoring/
 │   ├── script.js           # JavaScript logic
 │   ├── data.json           # Data kendaraan
 │   └── README.md           # Dokumentasi
-├── web_dashboard_new/      # Dashboard lengkap (port 8085)
-│   ├── server.py           # Python server dengan API
-│   ├── index.html          # Dashboard utama
-│   ├── script.js           # JavaScript logic
-│   ├── data.json           # Data kendaraan
-│   ├── requirements.txt    # Dependencies
-│   └── README.md           # Dokumentasi
 ├── data/                   # Data source
 ├── csv_data/              # CSV exports
 ├── extracted_data/        # Excel source
 ├── scripts/               # Utility scripts
 └── config.json            # Konfigurasi sistem
 ```
-```
 
 ## 🔧 API Endpoints
 
-### Dashboard Lengkap (8085):
-- `GET /api/data` - Data kendaraan lengkap
-- `GET /api/stats` - Statistik dashboard
-- `GET /api/backups` - List backup files
-- `POST /api/update` - Update data kendaraan
+### Dashboard Modern (8087):
+- `GET /` - Dashboard utama
+- `GET /data` - Data kendaraan (JSON)
+- `GET /export` - Export data ke CSV
 
-### Dashboard Sederhana (8084):
-- `GET /` - Halaman utama dengan data
-- `GET /api/data` - Data JSON
+### Dashboard Portal (8099):
+- `GET /` - Portal semua dashboard links
 
-## 📊 Data Structure
+## 📱 Fitur Utama
 
-```json
-{
-  "id": 1,
-  "merk": "HONDA CS 1",
-  "no_polisi": "BK 2302 WAM",
-  "kategori": "Roda Dua",
-  "stnk_date": "2026-05-06",
-  "pajak_date": "2026-05-06",
-  "ktp": "LINGGO THIO PUTRO",
-  "status": "priority",
-  "hari_menuju_jatuh_tempo": 16,
-  "warna_status": "danger",
-  "catatan": "STNK dan Pajak sama tanggal"
-}
-```
+1. **Monitoring Real-time**: Pantau status STNK dan pajak kendaraan
+2. **Notifikasi Warna**: Status berdasarkan waktu jatuh tempo
+3. **Export Data**: Download data dalam format CSV
+4. **Responsive Design**: Optimal di semua device
+5. **Dark/Light Mode**: Toggle tema gelap/terang
 
-## 🎨 Status Colors
+## 🛠️ Teknologi
 
-| Hari | Status | Warna | Ikon |
-|------|--------|-------|------|
-| > 90 | AMAN | Hijau | ✅ |
-| 31-90 | PERINGATAN | Kuning | ⚠️ |
-| ≤ 30 | PRIORITAS | Merah | ⛔ |
+- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
+- **Backend**: Python 3.11 (http.server)
+- **Design**: TIDAL-style, Bootstrap 5 components
+- **Data**: JSON format dengan struktur terstandarisasi
 
-## 🔒 Backup & Maintenance
+## 🔐 Keamanan
 
-### Backup Otomatis:
-- Setiap update membuat backup di folder `backups/`
-- Format: `backup_YYYYMMDD_HHMMSS.json`
+- Semua dashboard hanya bisa diakses via Tailscale VPN
+- IP Tailscale: `100.121.49.116`
+- Domain Tailscale: `openclaw-hermes.ts.net`
+- Data dienkripsi end-to-end via Tailscale
 
-### Backup Manual:
-```bash
-tar -czf stnk_dashboard_backup_$(date +%Y%m%d_%H%M%S).tar.gz web_dashboard_simple/ web_dashboard_new/
-```
+## 🆘 Troubleshooting
 
-## 📱 Akses dari Device Lain
+1. **Dashboard tidak bisa diakses**:
+   - Pastikan Tailscale terhubung
+   - Cek status server: `ss -tlnp | grep :8087`
+   - Restart server jika perlu
 
-```
-Dashboard Sederhana: http://[SERVER_IP]:8084
-Dashboard Lengkap:   http://[SERVER_IP]:8085
-```
+2. **Data tidak muncul**:
+   - Cek file `data.json` ada dan valid
+   - Restart server untuk reload data
 
-## 📝 Catatan
+3. **WhatsApp link tidak terkirim**:
+   - Pastikan WhatsApp Bridge berjalan di port 3000
+   - Cek nomor yang diizinkan di script
 
-- Dashboard lama (port 8082) sudah dihapus total
-- Kedua dashboard tidak boleh diubah bentuknya
-- Backup reguler ke NAS diperlukan
-- Data sensitif sudah di-ignore di .gitignore
+## 📞 Kontak & Dukungan
 
-## 👥 Kontribusi
-
-Proyek ini dikelola oleh Hermes Agent untuk monitoring STNK & Pajak kendaraan.
-
----
-**Versi**: 2.0  
-**Update Terakhir**: 20 April 2026  
-**Status**: Produksi Ready
+- **Developer**: Hermes Agent
+- **WhatsApp**: +628****3720 (User)
+- **Owner**: +628****9099
+- **Backup**: GitHub repo & NAS storage

@@ -2,7 +2,6 @@
 # Script untuk share dashboard link ke WhatsApp
 # Simpan di: /root/stnk_monitoring/share_dashboard.sh
 
-DASHBOARD_COMPLETE="http://100.121.49.116:8085"
 TAILSCALE_IP="100.121.49.116"
 
 # Nomor WhatsApp yang diizinkan (dari memory)
@@ -35,8 +34,11 @@ send_whatsapp() {
 # Pesan yang akan dikirim
 MESSAGE="📊 STNK MONITORING DASHBOARD
 
-📈 Dashboard Lengkap (Full Features):
-${DASHBOARD_COMPLETE}
+🚀 Dashboard Modern (TIDAL Style):
+http://100.121.49.116:8087
+
+📱 Dashboard Portal (All Links):
+http://100.121.49.116:8099
 
 🔐 INSTRUKSI AKSES:
 1. Pastikan device terinstall Tailscale

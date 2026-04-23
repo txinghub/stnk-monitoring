@@ -21,10 +21,6 @@ MESSAGE="📊 **ALL STNK DASHBOARD LINKS** 📊
 🔗 http://${TAILSCALE_IP}:8099
 📋 Semua link dalam satu halaman
 
-📈 **DASHBOARD LENGKAP** (Full Features)
-🔗 http://${TAILSCALE_IP}:8085
-🔧 Semua fitur: charts, tables, updates, backups
-
 🔐 **INSTRUKSI AKSES:**
 1. Install Tailscale di device
 2. Login dengan akun yang di-share  
@@ -76,4 +72,3 @@ echo "🎉 All links sent successfully!"
 echo ""
 echo "📊 Dashboard Portal: http://${TAILSCALE_IP}:8099"
 echo "🎨 Modern Dashboard: http://${TAILSCALE_IP}:8087"
-echo "📈 Complete Dashboard: http://${TAILSCALE_IP}:8085"
