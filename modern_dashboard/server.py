@@ -84,8 +84,8 @@ class ModernDashboardHandler(BaseHTTPRequestHandler):
             
             for vehicle in data:
                 # Calculate days to expiry
-                days_stnk = self.calculate_days(vehicle.get('stnk_date'))
-                days_pajak = self.calculate_days(vehicle.get('pajak_date'))
+                days_stnk = self.calculate_days(vehicle.get('STNK') or vehicle.get('stnk_date'))
+                days_pajak = self.calculate_days(vehicle.get('PAJAK') or vehicle.get('pajak_date'))
                 
                 # Use the earliest expiry date
                 days_to_expiry = min(days_stnk, days_pajak)
@@ -121,15 +121,15 @@ class ModernDashboardHandler(BaseHTTPRequestHandler):
             }
             
             for vehicle in data:
-                days_stnk = self.calculate_days(vehicle.get('stnk_date'))
-                days_pajak = self.calculate_days(vehicle.get('pajak_date'))
+                days_stnk = self.calculate_days(vehicle.get('STNK') or vehicle.get('stnk_date'))
+                days_pajak = self.calculate_days(vehicle.get('PAJAK') or vehicle.get('pajak_date'))
                 days_to_expiry = min(days_stnk, days_pajak)
                 status = self.calculate_status(days_to_expiry)
                 
                 stats['by_status'][status] += 1
                 
                 # Count by category
-                category = vehicle.get('kategori', 'Unknown')
+                category = vehicle.get('Jenis', 'Unknown')
                 stats['by_category'][category] = stats['by_category'].get(category, 0) + 1
             
             self.send_json_response(stats)
