@@ -2,6 +2,8 @@
 let vehicleData = [];
 let statusChart = null;
 let daysChart = null;
+let pajakChart = null;
+let stnkChart = null;
 let dataTable = null;
 
 // API Configuration
@@ -97,32 +99,32 @@ function updateDashboard(data) {
         const row = document.createElement('tr');
         row.className = getStatusRowClass(vehicle.status);
         
-        // Format dates
-        const stnkDate = formatDate(vehicle.stnk_date);
-        const pajakDate = formatDate(vehicle.pajak_date);
+        // Format dates - menggunakan field names dari API
+        const stnkDate = formatDate(vehicle.STNK || vehicle.stnk_date);
+        const pajakDate = formatDate(vehicle.PAJAK || vehicle.pajak_date);
         
         // Create status badge
         const statusBadge = createStatusBadge(vehicle.status, vehicle.days_to_expiry);
         
         row.innerHTML = `
             <td>${index + 1}</td>
-            <td><strong>${vehicle.merk}</strong></td>
-            <td><span class="license-plate">${vehicle.no_polisi}</span></td>
-            <td>${vehicle.kategori}</td>
+            <td><strong>${vehicle.MERK || vehicle.merk || '-'}</strong></td>
+            <td><span class="license-plate">${vehicle['No.Polisi'] || vehicle.no_polisi || '-'}</span></td>
+            <td>${vehicle.Jenis || vehicle.kategori || '-'}</td>
             <td>${stnkDate}</td>
             <td>${pajakDate}</td>
             <td>${statusBadge}</td>
             <td>
                 <div class="d-flex align-items-center">
-                    <span class="me-2">${vehicle.days_to_expiry}</span>
+                    <span class="me-2">${vehicle.days_to_expiry || 0}</span>
                     <div class="progress flex-grow-1" style="height: 6px;">
                         <div class="progress-bar ${getProgressBarClass(vehicle.status)}" 
-                             style="width: ${getProgressWidth(vehicle.days_to_expiry)}%">
+                             style="width: ${getProgressWidth(vehicle.days_to_expiry || 0)}%">
                         </div>
                     </div>
                 </div>
             </td>
-            <td>${vehicle.ktp || '-'}</td>
+            <td>${vehicle.KTP || vehicle.ktp || '-'}</td>
             <td>${vehicle.catatan || '-'}</td>
         `;
         
@@ -140,19 +142,32 @@ function updateDashboard(data) {
 // Update charts
 function updateCharts(data) {
     updateStatusChart(data);
-    updateDaysChart(data);
+    updatePajakChart(data);
+    updateStnkChart(data);
 }
 
 // Update status distribution chart
 function updateStatusChart(data) {
     const ctx = document.getElementById('statusChart').getContext('2d');
     
-    // Count by status
-    const counts = {
-        safe: data.filter(v => v.status === 'safe').length,
-        warning: data.filter(v => v.status === 'warning').length,
-        priority: data.filter(v => v.status === 'priority').length
-    };
+    // Count based on days_to_expiry, not just status field
+    let safeCount = 0;
+    let warningCount = 0;
+    let priorityCount = 0;
+    let unknownCount = 0;
+    
+    data.forEach(vehicle => {
+        const days = vehicle.days_to_expiry || 9999;
+        if (days <= 30) {
+            priorityCount++;
+        } else if (days <= 90) {
+            warningCount++;
+        } else if (days < 9999) { // Not unknown
+            safeCount++;
+        } else {
+            unknownCount++;
+        }
+    });
     
     // Destroy existing chart
     if (statusChart) {
@@ -163,18 +178,20 @@ function updateStatusChart(data) {
     statusChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Aman', 'Perhatian', 'Prioritas'],
+            labels: ['Aman', 'Perhatian', 'Prioritas', 'Tidak Diketahui'],
             datasets: [{
-                data: [counts.safe, counts.warning, counts.priority],
+                data: [safeCount, warningCount, priorityCount, unknownCount],
                 backgroundColor: [
                     'rgba(67, 233, 123, 0.8)',
                     'rgba(250, 112, 154, 0.8)',
-                    'rgba(255, 8, 68, 0.8)'
+                    'rgba(255, 8, 68, 0.8)',
+                    'rgba(128, 128, 128, 0.8)'  // Gray for unknown
                 ],
                 borderColor: [
                     'rgba(67, 233, 123, 1)',
                     'rgba(250, 112, 154, 1)',
-                    'rgba(255, 8, 68, 1)'
+                    'rgba(255, 8, 68, 1)',
+                    'rgba(128, 128, 128, 1)'  // Gray for unknown
                 ],
                 borderWidth: 2,
                 hoverOffset: 15
@@ -211,28 +228,36 @@ function updateStatusChart(data) {
     });
 }
 
-// Update days to expiry chart
-function updateDaysChart(data) {
-    const ctx = document.getElementById('daysChart').getContext('2d');
+// Update Pajak chart (max 365 hari)
+function updatePajakChart(data) {
+    const ctx = document.getElementById('pajakChart').getContext('2d');
     
-    // Sort by days to expiry (ascending)
-    const sortedData = [...data].sort((a, b) => a.days_to_expiry - b.days_to_expiry);
-    const labels = sortedData.map(v => v.no_polisi);
-    const daysData = sortedData.map(v => v.days_to_expiry);
-    const colors = sortedData.map(v => getStatusColor(v.status));
+    // Sort by pajak days (ascending)
+    const sortedData = [...data].sort((a, b) => (a.pajak_days || 365) - (b.pajak_days || 365));
+    const labels = sortedData.map(v => v.no_polisi || v['No.Polisi'] || '-');
+    const daysData = sortedData.map(v => {
+        const d = v.pajak_days || 365;
+        return d > 365 ? 365 : d;
+    });
+    const colors = sortedData.map(v => {
+        const d = v.pajak_days || 365;
+        if (d <= 30) return 'rgba(255, 8, 68, 0.8)';
+        if (d <= 90) return 'rgba(250, 112, 154, 0.8)';
+        return 'rgba(67, 233, 123, 0.8)';
+    });
     
     // Destroy existing chart
-    if (daysChart) {
-        daysChart.destroy();
+    if (pajakChart && typeof pajakChart.destroy === 'function') {
+        pajakChart.destroy();
     }
     
     // Create new chart
-    daysChart = new Chart(ctx, {
+    pajakChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Hari Tersisa',
+                label: 'Hari Pajak Tersisa',
                 data: daysData,
                 backgroundColor: colors,
                 borderColor: colors.map(c => c.replace('0.8', '1')),
@@ -245,9 +270,7 @@ function updateDaysChart(data) {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: { display: false },
                 tooltip: {
                     backgroundColor: 'rgba(30, 41, 59, 0.9)',
                     titleColor: '#e2e8f0',
@@ -257,55 +280,130 @@ function updateDaysChart(data) {
                     callbacks: {
                         label: function(context) {
                             const vehicle = sortedData[context.dataIndex];
-                            return [
-                                `Hari tersisa: ${context.raw}`,
-                                `Status: ${getStatusText(vehicle.status)}`,
-                                `STNK: ${formatDate(vehicle.stnk_date)}`,
-                                `Pajak: ${formatDate(vehicle.pajak_date)}`
-                            ];
+                            const raw = vehicle.pajak_days || 365;
+                            const text = raw > 365 ? '365+ (Tidak diketahui)' : `${raw} hari`;
+                            return [`Pajak: ${text}`];
                         }
                     }
                 }
             },
             scales: {
                 x: {
-                    ticks: {
-                        color: '#94a3b8',
-                        maxRotation: 45,
-                        minRotation: 45
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    }
+                    ticks: { color: '#94a3b8', maxRotation: 45, minRotation: 45 },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
                 },
                 y: {
                     beginAtZero: true,
-                    ticks: {
-                        color: '#94a3b8'
-                    },
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Hari',
-                        color: '#94a3b8'
+                    max: 365,
+                    ticks: { color: '#94a3b8', stepSize: 30 },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    title: { display: true, text: 'Hari', color: '#94a3b8' }
+                }
+            },
+            animation: { duration: 1000, easing: 'easeOutQuart' }
+        }
+    });
+}
+
+// Update STNK chart (max 5 tahun, satuan tahun)
+function updateStnkChart(data) {
+    const ctx = document.getElementById('stnkChart').getContext('2d');
+    
+    // Sort by stnk days (ascending)
+    const sortedData = [...data].sort((a, b) => (a.stnk_days || 1825) - (b.stnk_days || 1825));
+    const labels = sortedData.map(v => v.no_polisi || v['No.Polisi'] || '-');
+    // Convert days to years (max 5 years)
+    const yearsData = sortedData.map(v => {
+        const d = v.stnk_days || 1825;
+        const years = Math.round(d / 365 * 10) / 10;
+        return years > 5 ? 5 : years;
+    });
+    const colors = sortedData.map(v => {
+        const d = v.stnk_days || 1825;
+        const years = d / 365;
+        if (years <= 0.5) return 'rgba(255, 8, 68, 0.8)';
+        if (years <= 1) return 'rgba(250, 112, 154, 0.8)';
+        return 'rgba(67, 233, 123, 0.8)';
+    });
+    
+    // Destroy existing chart
+    if (stnkChart && typeof stnkChart.destroy === 'function') {
+        stnkChart.destroy();
+    }
+    
+    // Create new chart
+    stnkChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Tahun STNK Tersisa',
+                data: yearsData,
+                backgroundColor: colors,
+                borderColor: colors.map(c => c.replace('0.8', '1')),
+                borderWidth: 1,
+                borderRadius: 6,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 41, 59, 0.9)',
+                    titleColor: '#e2e8f0',
+                    bodyColor: '#e2e8f0',
+                    borderColor: '#475569',
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function(context) {
+                            const vehicle = sortedData[context.dataIndex];
+                            const raw = vehicle.stnk_days || 1825;
+                            const years = raw / 365;
+                            const text = raw > 1825 ? '5+ (Tidak diketahui)' : `${years.toFixed(1)} tahun (${raw} hari)`;
+                            return [`STNK: ${text}`];
+                        }
                     }
                 }
             },
-            animation: {
-                duration: 1000,
-                easing: 'easeOutQuart'
-            }
+            scales: {
+                x: {
+                    ticks: { color: '#94a3b8', maxRotation: 45, minRotation: 45 },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                },
+                y: {
+                    beginAtZero: true,
+                    max: 5,
+                    ticks: { color: '#94a3b8', stepSize: 0.5, callback: function(v) { return v + ' thn'; } },
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    title: { display: true, text: 'Tahun', color: '#94a3b8' }
+                }
+            },
+            animation: { duration: 1000, easing: 'easeOutQuart' }
         }
     });
 }
 
 // Update statistics
 function updateStats(data) {
-    const safeCount = data.filter(v => v.status === 'safe').length;
-    const warningCount = data.filter(v => v.status === 'warning').length;
-    const priorityCount = data.filter(v => v.status === 'priority').length;
+    // Count based on days_to_expiry, not just status field
+    let safeCount = 0;
+    let warningCount = 0;
+    let priorityCount = 0;
+    
+    data.forEach(vehicle => {
+        const days = vehicle.days_to_expiry || 9999;
+        if (days <= 30) {
+            priorityCount++;
+        } else if (days <= 90) {
+            warningCount++;
+        } else if (days < 9999) { // Not unknown
+            safeCount++;
+        }
+        // Unknown (days === 9999) not counted
+    });
     
     // Animate count up
     animateCount('safeCount', safeCount);
@@ -313,21 +411,46 @@ function updateStats(data) {
     animateCount('priorityCount', priorityCount);
 }
 
-// Animate number counting
+// Store animation timers
+const animationTimers = {};
+
+// Animate number counting - always start from 0 to prevent runaway counters
 function animateCount(elementId, target) {
     const element = document.getElementById(elementId);
-    const current = parseInt(element.textContent) || 0;
-    const increment = target > current ? 1 : -1;
-    let currentValue = current;
+    if (!element) return;
+    
+    // Clear existing timer for this element immediately
+    if (animationTimers[elementId]) {
+        clearInterval(animationTimers[elementId]);
+        delete animationTimers[elementId];
+    }
+    
+    // Always set to target directly without animation if target is small
+    // or if element already shows the target value
+    if (target <= 3) {
+        element.textContent = target;
+        return;
+    }
+    
+    // Start animation from 0 every time
+    element.textContent = 0;
+    
+    const increment = 1;
+    let currentValue = 0;
     
     const timer = setInterval(() => {
         currentValue += increment;
         element.textContent = currentValue;
         
-        if (currentValue === target) {
+        if (currentValue >= target) {
+            element.textContent = target;
             clearInterval(timer);
+            delete animationTimers[elementId];
         }
     }, 30);
+    
+    // Store timer reference
+    animationTimers[elementId] = timer;
 }
 
 // Update last update time
@@ -375,7 +498,7 @@ function populateVehicleSelect() {
     vehicleData.forEach(vehicle => {
         const option = document.createElement('option');
         option.value = vehicle.id;
-        option.textContent = `${vehicle.no_polisi} - ${vehicle.merk}`;
+        option.textContent = `${vehicle["No.Polisi"] || vehicle.no_polisi} - ${vehicle.MERK || vehicle.merk}`;
         select.appendChild(option);
     });
 }
@@ -383,19 +506,19 @@ function populateVehicleSelect() {
 // Update current info in modal
 function updateCurrentInfo(vehicle) {
     const infoDiv = document.getElementById('currentInfo');
-    const stnkDate = formatDate(vehicle.stnk_date);
-    const pajakDate = formatDate(vehicle.pajak_date);
+    const stnkDate = formatDate(vehicle.STNK || vehicle.stnk_date);
+    const pajakDate = formatDate(vehicle.PAJAK || vehicle.pajak_date);
     const statusBadge = createStatusBadge(vehicle.status, vehicle.days_to_expiry);
     
     infoDiv.innerHTML = `
         <div class="row">
             <div class="col-6">
                 <small class="text-muted">No Polisi</small>
-                <div><strong>${vehicle.no_polisi}</strong></div>
+                <div><strong>${vehicle["No.Polisi"] || vehicle.no_polisi}</strong></div>
             </div>
             <div class="col-6">
                 <small class="text-muted">Merk</small>
-                <div>${vehicle.merk}</div>
+                <div>${vehicle.MERK || vehicle.merk}</div>
             </div>
         </div>
         <div class="row mt-2">
@@ -522,14 +645,14 @@ function exportData() {
     vehicleData.forEach((vehicle, index) => {
         const row = [
             index + 1,
-            `"${vehicle.merk}"`,
-            vehicle.no_polisi,
-            vehicle.kategori,
-            formatDate(vehicle.stnk_date),
-            formatDate(vehicle.pajak_date),
+            `"${vehicle.MERK || vehicle.merk}"`,
+            vehicle["No.Polisi"] || vehicle.no_polisi,
+            vehicle.Jenis || vehicle.kategori,
+            formatDate(vehicle.STNK || vehicle.stnk_date),
+            formatDate(vehicle.PAJAK || vehicle.pajak_date),
             getStatusText(vehicle.status),
             vehicle.days_to_expiry,
-            `"${vehicle.ktp || ''}"`,
+            `"${vehicle.KTP || vehicle.ktp || ''}"`,
             `"${vehicle.catatan || ''}"`
         ];
         
@@ -570,35 +693,67 @@ function formatDate(dateString) {
 function getStatusText(status) {
     const texts = {
         'safe': 'Aman',
+        'aman': 'Aman',
         'warning': 'Perhatian',
-        'priority': 'Prioritas'
+        'perhatian': 'Perhatian',
+        'alert': 'Perhatian',
+        'priority': 'Prioritas',
+        'prioritas': 'Prioritas',
+        'unknown': 'Tidak Diketahui'
     };
     return texts[status] || status;
 }
 
 function createStatusBadge(status, days) {
-    const text = getStatusText(status);
-    const icon = status === 'safe' ? 'bi-check-circle' : 
-                 status === 'warning' ? 'bi-exclamation-triangle' : 
-                 'bi-exclamation-octagon';
+    // Determine actual status based on days_to_expiry
+    let actualStatus = status;
+    if (days !== undefined && days !== null) {
+        if (days <= 30) {
+            actualStatus = 'priority';
+        } else if (days <= 90) {
+            actualStatus = 'warning';
+        } else if (days < 9999) {
+            actualStatus = 'safe';
+        } else {
+            actualStatus = 'unknown';
+        }
+    }
     
-    return `<span class="badge-status ${status}">
+    const text = getStatusText(actualStatus);
+    const icon = actualStatus === 'safe' ? 'bi-check-circle' : 
+                 actualStatus === 'warning' ? 'bi-exclamation-triangle' : 
+                 actualStatus === 'priority' ? 'bi-exclamation-octagon' :
+                 'bi-question-circle';
+    
+    return `<span class="badge-status ${actualStatus}">
                 <i class="bi ${icon}"></i>
                 ${text}
             </span>`;
 }
 
 function getStatusRowClass(status) {
+    // Map all status variations to standard ones
+    if (status === 'aman' || status === 'safe') return 'status-safe';
+    if (status === 'perhatian' || status === 'warning' || status === 'alert') return 'status-warning';
+    if (status === 'prioritas' || status === 'priority') return 'status-priority';
+    if (status === 'unknown') return 'status-unknown';
     return `status-${status}`;
 }
 
 function getProgressBarClass(status) {
+    // Map all status variations to standard ones
+    let actualStatus = status;
+    if (status === 'aman') actualStatus = 'safe';
+    if (status === 'perhatian' || status === 'alert') actualStatus = 'warning';
+    if (status === 'prioritas') actualStatus = 'priority';
+    
     const classes = {
         'safe': 'bg-success',
         'warning': 'bg-warning',
-        'priority': 'bg-danger'
+        'priority': 'bg-danger',
+        'unknown': 'bg-secondary'
     };
-    return classes[status] || '';
+    return classes[actualStatus] || '';
 }
 
 function getProgressWidth(days) {
@@ -607,11 +762,24 @@ function getProgressWidth(days) {
     return Math.min(100, Math.max(0, (days / 365) * 100));
 }
 
+// Get status based on days_to_expiry
+function getStatusFromDays(days) {
+    if (days <= 30) return 'priority';
+    if (days <= 90) return 'warning';
+    if (days < 9999) return 'safe';
+    return 'unknown';
+}
+
 function getStatusColor(status) {
     const colors = {
         'safe': 'rgba(67, 233, 123, 0.8)',
+        'aman': 'rgba(67, 233, 123, 0.8)',
         'warning': 'rgba(250, 112, 154, 0.8)',
-        'priority': 'rgba(255, 8, 68, 0.8)'
+        'perhatian': 'rgba(250, 112, 154, 0.8)',
+        'alert': 'rgba(250, 112, 154, 0.8)',
+        'priority': 'rgba(255, 8, 68, 0.8)',
+        'prioritas': 'rgba(255, 8, 68, 0.8)',
+        'unknown': 'rgba(128, 128, 128, 0.8)'
     };
     return colors[status] || 'rgba(148, 163, 184, 0.8)';
 }

@@ -51,7 +51,7 @@ class ModernDashboardHandler(BaseHTTPRequestHandler):
                 self.handle_api_health()
             # Static files
             elif path == '/':
-                self.serve_file('index.html', 'text/html')
+                self.serve_file('index_admin.html', 'text/html')
             elif path == '/script.js':
                 self.serve_file('script.js', 'application/javascript')
             elif path.endswith('.css'):
