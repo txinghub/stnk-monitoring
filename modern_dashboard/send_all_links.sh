@@ -6,9 +6,9 @@ WHATSAPP_BRIDGE="http://localhost:3000/send"
 
 # Authorized numbers
 ALLOWED_NUMBERS=(
-    "+628159153720"    # User
-    "+6285261919099"   # Owner
-    "+8615017041161"   # Mandarin contact
+    "+628****3720"    # User
+    "+628****9099"   # Owner
+    "+861****1161"   # Mandarin contact
 )
 
 MESSAGE="📊 **ALL STNK DASHBOARD LINKS** 📊
@@ -20,10 +20,6 @@ MESSAGE="📊 **ALL STNK DASHBOARD LINKS** 📊
 📱 **DASHBOARD PORTAL** (All Links)
 🔗 http://${TAILSCALE_IP}:8099
 📋 Semua link dalam satu halaman
-
-⚡ **DASHBOARD SEDERHANA** (Clean Design)
-🔗 http://${TAILSCALE_IP}:8084
-✨ Versi simple untuk monitoring cepat
 
 📈 **DASHBOARD LENGKAP** (Full Features)
 🔗 http://${TAILSCALE_IP}:8085
@@ -56,7 +52,7 @@ send_whatsapp() {
     echo "📱 Sending to: $phone_number"
     
     # Escape JSON
-    message_escaped=$(echo "$message" | sed 's/"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
+    message_escaped=$(echo "$message" | sed 's/\"/\\"/g' | sed ':a;N;$!ba;s/\n/\\n/g')
     
     curl -X POST "$WHATSAPP_BRIDGE" \
         -H "Content-Type: application/json" \
@@ -80,5 +76,4 @@ echo "🎉 All links sent successfully!"
 echo ""
 echo "📊 Dashboard Portal: http://${TAILSCALE_IP}:8099"
 echo "🎨 Modern Dashboard: http://${TAILSCALE_IP}:8087"
-echo "⚡ Simple Dashboard: http://${TAILSCALE_IP}:8084"
 echo "📈 Complete Dashboard: http://${TAILSCALE_IP}:8085"

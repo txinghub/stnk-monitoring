@@ -2,7 +2,6 @@
 # Script untuk share dashboard link ke WhatsApp
 # Simpan di: /root/stnk_monitoring/share_dashboard.sh
 
-DASHBOARD_SIMPLE="http://100.121.49.116:8084"
 DASHBOARD_COMPLETE="http://100.121.49.116:8085"
 TAILSCALE_IP="100.121.49.116"
 
@@ -11,7 +10,7 @@ ALLOWED_NUMBERS=(
     "+628****9099"
     "+628****0230"  
     "+628****3289"
-    "+628159153720"
+    "+628****3720"
     "+861****1161"
 )
 
@@ -35,9 +34,6 @@ send_whatsapp() {
 
 # Pesan yang akan dikirim
 MESSAGE="📊 STNK MONITORING DASHBOARD
-
-🔗 Dashboard Sederhana (Clean Design):
-${DASHBOARD_SIMPLE}
 
 📈 Dashboard Lengkap (Full Features):
 ${DASHBOARD_COMPLETE}

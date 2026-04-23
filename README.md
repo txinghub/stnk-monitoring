@@ -1,28 +1,27 @@
 # STNK Monitoring Dashboard System
 
-Sistem monitoring STNK dan Pajak kendaraan dengan dua versi dashboard.
+Sistem monitoring STNK dan Pajak kendaraan dengan dashboard modern.
 
 ## 📊 Dashboard Versi
 
-### 1. Dashboard Sederhana (Port 8084)
-- **Design**: Modern, clean, card-based layout
-- **Fitur**: Statistik, warna status, responsive design
-- **Teknologi**: Pure HTML/CSS/JS + Python server
-- **Link**: http://localhost:8084
-
-### 2. Dashboard Lengkap (Port 8085) 
+### 1. Dashboard Lengkap (Port 8085) 
 - **Design**: Professional dengan Bootstrap 5
 - **Fitur**: Chart.js, DataTables, Update Modal, Backup otomatis
 - **Teknologi**: Bootstrap 5, Chart.js, DataTables, Python API
 - **Link**: http://localhost:8085
 
-## 🚀 Instalasi & Menjalankan
+### 2. Dashboard Modern (Port 8087)
+- **Design**: TIDAL-style premium dashboard
+- **Fitur**: Dark/light mode, animations, export CSV, responsive
+- **Teknologi**: Modern CSS, JavaScript, Python server
+- **Link**: http://localhost:8087
 
-### Dashboard Sederhana (8084):
-```bash
-cd web_dashboard_simple
-python3 server.py
-```
+### 3. Dashboard Portal (Port 8099)
+- **Design**: Portal untuk semua dashboard links
+- **Fitur**: Semua link dalam satu halaman
+- **Link**: http://localhost:8099
+
+## 🚀 Instalasi & Menjalankan
 
 ### Dashboard Lengkap (8085):
 ```bash
@@ -30,14 +29,30 @@ cd web_dashboard_new
 python3 server.py
 ```
 
+### Dashboard Modern (8087):
+```bash
+cd modern_dashboard
+python3 server.py
+```
+
+### Dashboard Portal (8099):
+```bash
+cd modern_dashboard
+python3 simple_server_8099.py
+```
+
 ## 📁 Struktur Proyek
 
 ```
 stnk_monitoring/
-├── web_dashboard_simple/    # Dashboard sederhana (port 8084)
-│   ├── server.py           # Python server
+├── modern_dashboard/      # Dashboard modern (port 8087 & 8099)
+│   ├── server.py           # Python server untuk 8087
+│   ├── simple_server_8099.py # Python server untuk 8099
+│   ├── index.html          # Dashboard utama
+│   ├── portal.html         # Portal semua links
+│   ├── script.js           # JavaScript logic
 │   ├── data.json           # Data kendaraan
-│   └── (single HTML file embedded)
+│   └── README.md           # Dokumentasi
 ├── web_dashboard_new/      # Dashboard lengkap (port 8085)
 │   ├── server.py           # Python server dengan API
 │   ├── index.html          # Dashboard utama
@@ -48,7 +63,9 @@ stnk_monitoring/
 ├── data/                   # Data source
 ├── csv_data/              # CSV exports
 ├── extracted_data/        # Excel source
-└── config.json            # Konfigurasi
+├── scripts/               # Utility scripts
+└── config.json            # Konfigurasi sistem
+```
 ```
 
 ## 🔧 API Endpoints

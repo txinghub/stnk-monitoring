@@ -1,143 +1,83 @@
-# stnk-modern-dashboard-tidal
+# Modern STNK Dashboard (Port 8087 & 8099)
 
-Modern STNK monitoring dashboard with TIDAL style design, animations, and premium features
+Dashboard monitoring STNK dan Pajak kendaraan dengan desain modern TIDAL-style.
 
-## 📋 Project Information
-- **Created**: 2026-04-22 14:53:17
-- **Location**: /root/stnk_monitoring/modern_dashboard
-- **GitHub**: https://github.com/txinghub/stnk-modern-dashboard-tidal
-- **Server**: openclaw-hermes
-- **Tailscale IP**: 100.121.49.116
+## 🎨 Fitur Utama
 
-## 🚀 Dashboard Access Links
+- **Desain Premium**: TIDAL-style dengan dark/light mode
+- **Animasi Smooth**: Transisi dan efek visual modern
+- **Responsive**: Optimal di semua device (desktop, tablet, mobile)
+- **Export Data**: Download data dalam format CSV
+- **Real-time Updates**: Data diperbarui otomatis
+- **Multi-dashboard**: Portal semua link di satu tempat
 
-### Primary Dashboard (Modern TIDAL Style)
+## 🚀 Dashboard yang Tersedia
+
+### 1. Dashboard Modern (Port 8087)
 - **URL**: http://100.121.49.116:8087
-- **Port**: 8087
-- **Features**: TIDAL design, animations, dark/light mode, charts, export
+- **Fitur**: Dashboard utama dengan semua fitur premium
+- **Design**: TIDAL-style dengan dark/light mode toggle
 
-### Dashboard Portal (All Links)
+### 2. Dashboard Portal (Port 8099)
 - **URL**: http://100.121.49.116:8099
-- **Port**: 8099
-- **Features**: All dashboard links in one page
+- **Fitur**: Portal semua dashboard links
+- **Kegunaan**: Satu halaman untuk semua akses dashboard
 
-### Other Dashboards
-- Simple Dashboard: http://100.121.49.116:8084
-- Complete Dashboard: http://100.121.49.116:8085
+### 3. Dashboard Lengkap (Port 8085)
+- **URL**: http://100.121.49.116:8085
+- **Fitur**: Dashboard lengkap dengan Bootstrap 5
+- **Catatan**: Versi lengkap dengan semua fitur
 
-## 📁 Project Structure
-```
-modern_dashboard/
-├── index.html          # Main dashboard UI (TIDAL style)
-├── script.js           # Frontend logic with animations
-├── server.py           # Python backend (port 8087)
-├── data.json           # Vehicle data (10 samples)
-├── portal.html         # All links portal (port 8099)
-├── share_dashboard.sh  # WhatsApp sharing script
-├── send_all_links.sh   # Send all links via WhatsApp
-├── README.md           # This documentation
-├── requirements.txt    # Python dependencies
-├── .gitignore          # Git ignore file
-├── backups/            # Auto-generated backups
-└── server.log          # Server logs
-```
+## 📁 File Penting
 
-## 🔧 Technical Details
+- `server.py` - Server untuk dashboard modern (port 8087)
+- `simple_server_8099.py` - Server untuk dashboard portal (port 8099)
+- `index.html` - Dashboard utama (port 8087)
+- `portal.html` - Portal semua links (port 8099)
+- `script.js` - JavaScript logic
+- `data.json` - Data kendaraan
+- `send_all_links.sh` - Script kirim link via WhatsApp
 
-### Server Configuration
-- **Port**: 8087 (Modern Dashboard), 8099 (Portal)
-- **Bind Address**: 0.0.0.0 (accessible via Tailscale)
-- **Auto Backup**: Before every update
-- **Auto Refresh**: 30 seconds interval
+## 🛠️ Menjalankan Dashboard
 
-### Features Implemented
-✅ TIDAL style dark blue gradient design  
-✅ AOS animations and hover effects  
-✅ Interactive charts (Chart.js)  
-✅ Sidebar navigation with icons  
-✅ Dark/light mode toggle  
-✅ Export to CSV functionality  
-✅ Mobile responsive design  
-✅ Auto backup system  
-✅ WhatsApp integration  
-✅ Tailscale remote access  
-
-### API Endpoints
-- `GET /api/data` - Vehicle data with status
-- `GET /api/stats` - Dashboard statistics  
-- `GET /api/backups` - List of backup files
-- `POST /api/update` - Update vehicle dates
-- `GET /api/health` - Health check
-
-## 🔐 Security & Access
-
-### Authorized WhatsApp Numbers
-- +628159153720 (主任 - user)
-- +6285261919099 (Owner/pemilik utama)
-- +8615017041161 (Mandarin/English contact)
-
-### Access Requirements
-1. Tailscale installed on device
-2. Login with shared account
-3. Status must be "Connected"
-4. Open dashboard link in browser
-
-## 🛠 Backup & Restoration
-
-### GitHub Backup
-This repository serves as the primary backup. To restore:
-
+### Dashboard Modern (8087):
 ```bash
-# Clone repository
-git clone https://github.com/txinghub/stnk-modern-dashboard-tidal.git
-
-# Start dashboard
-cd stnk-modern-dashboard-tidal
+cd /root/stnk_monitoring/modern_dashboard
 python3 server.py
 ```
 
-### NAS Backup
-Backup also stored on NAS at: `/root/nas_backups/`
-
-### Manual Backup Commands
+### Dashboard Portal (8099):
 ```bash
-# Create timestamped backup
-cd /root/stnk_monitoring
-tar -czf modern_dashboard_backup_$(date +%Y%m%d_%H%M%S).tar.gz modern_dashboard/
-
-# Restore from backup
-tar -xzf modern_dashboard_backup_YYYYMMDD_HHMMSS.tar.gz
+cd /root/stnk_monitoring/modern_dashboard
+python3 simple_server_8099.py
 ```
 
-## 📞 Support & Troubleshooting
+## 📱 Kirim Link via WhatsApp
 
-### Common Issues
-1. **Cannot access dashboard**: Check Tailscale connection status
-2. **Charts not loading**: Check internet connection (CDN dependencies)
-3. **Update not working**: Check server logs and backup directory permissions
-4. **Mobile display issues**: Use responsive design, check browser compatibility
-
-### Server Status Check
+Kirim semua link dashboard ke WhatsApp:
 ```bash
-# Check if server is running
-ss -tlnp | grep ':8087'
-ss -tlnp | grep ':8099'
-
-# Check server logs
-tail -f /root/stnk_monitoring/modern_dashboard/server.log
+cd /root/stnk_monitoring/modern_dashboard
+bash send_all_links.sh
 ```
 
-## 📅 Version History
+## 🔐 Keamanan
 
-### v1.0 - 2026-04-22
-- Initial release with TIDAL style design
-- Complete dashboard with all premium features
-- Portal page with all access links
-- WhatsApp integration for link sharing
-- GitHub and NAS backup setup
+- Semua dashboard hanya bisa diakses via Tailscale VPN
+- IP Tailscale: `100.121.49.116`
+- Domain Tailscale: `openclaw-hermes.ts.net`
+- Hanya nomor yang diizinkan yang bisa menerima link
 
----
+## 🆘 Troubleshooting
 
-**Last Updated**: 2026-04-22 14:53:17 
-**Backup Status**: ✅ Complete (GitHub + NAS)
-**Dashboard Status**: ✅ Running on ports 8087 & 8099
+1. **Dashboard tidak bisa diakses**:
+   - Pastikan Tailscale terhubung
+   - Cek status server: `ss -tlnp | grep :8087`
+   - Restart server jika perlu
+
+2. **Data tidak muncul**:
+   - Cek file `data.json` ada dan valid
+   - Restart server untuk reload data
+
+3. **WhatsApp link tidak terkirim**:
+   - Pastikan WhatsApp Bridge berjalan di port 3000
+   - Cek nomor yang diizinkan di script
