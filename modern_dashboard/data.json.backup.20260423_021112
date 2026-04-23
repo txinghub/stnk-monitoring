@@ -7,10 +7,7 @@
     "stnk_date": "2027-12-21",
     "pajak_date": "2026-12-21",
     "ktp": "LAI JAUW TJOE",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 243,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   },
   {
     "id": 2,
@@ -20,9 +17,6 @@
     "stnk_date": "2026-05-06",
     "pajak_date": "2026-05-06",
     "ktp": "LINGGO THIO PUTRO",
-    "status": "priority",
-    "hari_menuju_jatuh_tempo": 14,
-    "warna_status": "danger",
     "catatan": "STNK dan Pajak sama tanggal"
   },
   {
@@ -30,13 +24,10 @@
     "merk": "HONDA NF",
     "no_polisi": "BK 4661 TAN",
     "kategori": "Roda Dua",
-    "stnk_date": null,
-    "pajak_date": null,
+    "stnk_date": "",
+    "pajak_date": "",
     "ktp": "BOIMIN",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": null,
-    "warna_status": "success",
-    "catatan": "Data tanggal belum lengkap"
+    "catatan": "Belum ada tanggal"
   },
   {
     "id": 4,
@@ -46,10 +37,7 @@
     "stnk_date": "2028-09-18",
     "pajak_date": "2026-09-18",
     "ktp": "SEDI ANTO SIMARMATA",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 149,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   },
   {
     "id": 5,
@@ -59,9 +47,6 @@
     "stnk_date": "2026-08-11",
     "pajak_date": "2026-08-11",
     "ktp": "HAOGOSOKHI JAI",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 111,
-    "warna_status": "success",
     "catatan": "STNK dan Pajak sama tanggal"
   },
   {
@@ -72,9 +57,6 @@
     "stnk_date": "2026-12-05",
     "pajak_date": "2026-12-05",
     "ktp": "ROMMEL MANURUNG",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 227,
-    "warna_status": "success",
     "catatan": "STNK dan Pajak sama tanggal"
   },
   {
@@ -82,13 +64,10 @@
     "merk": "SUZUKI 125 SC A/T",
     "no_polisi": "BK 5541 WAP",
     "kategori": "Roda Dua",
-    "stnk_date": "2027-04-22",
-    "pajak_date": "2026-04-22",
+    "stnk_date": "",
+    "pajak_date": "",
     "ktp": "HARRY",
-    "status": "priority",
-    "hari_menuju_jatuh_tempo": 0,
-    "warna_status": "danger",
-    "catatan": "Data tanggal belum lengkap | Diupdate pada 2026-04-22 06:17 | Diupdate pada 2026-04-22 06:18 | Diupdate pada 2026-04-22 06:26"
+    "catatan": "Belum ada tanggal"
   },
   {
     "id": 8,
@@ -98,36 +77,27 @@
     "stnk_date": "2028-12-07",
     "pajak_date": "2026-12-07",
     "ktp": "RIDHO HARTONO",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 229,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   },
   {
     "id": 9,
     "merk": "VIAR - V 20 RL M/T",
     "no_polisi": "BK 2819 WAQ",
-    "kategori": "Roda Tiga",
+    "kategori": "Roda Dua",
     "stnk_date": "2028-11-09",
     "pajak_date": "2026-11-09",
     "ktp": "RENTY",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 201,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   },
   {
     "id": 10,
     "merk": "VIAR - V 20 RL M/T",
     "no_polisi": "BK 2007 WBZ",
-    "kategori": "Roda Tiga",
+    "kategori": "Roda Dua",
     "stnk_date": "2028-09-19",
     "pajak_date": "2026-09-19",
     "ktp": "AI LI",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 150,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   },
   {
     "id": 11,
@@ -137,23 +107,17 @@
     "stnk_date": "2028-12-12",
     "pajak_date": "2026-12-12",
     "ktp": "PT.SUTAN INDO",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 234,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   },
   {
     "id": 12,
     "merk": "TOYOTA AVANZA",
     "no_polisi": "BK 1834 WZ",
     "kategori": "Roda Empat",
-    "stnk_date": null,
-    "pajak_date": null,
+    "stnk_date": "",
+    "pajak_date": "",
     "ktp": "ANSHARY",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": null,
-    "warna_status": "success",
-    "catatan": "Data tanggal belum lengkap"
+    "catatan": "Belum ada tanggal"
   },
   {
     "id": 13,
@@ -163,10 +127,7 @@
     "stnk_date": "2028-11-01",
     "pajak_date": "2026-11-01",
     "ktp": "LINGGO",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 193,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   },
   {
     "id": 14,
@@ -176,10 +137,7 @@
     "stnk_date": "2028-09-05",
     "pajak_date": "2026-09-05",
     "ktp": "DJUBIR",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 136,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   },
   {
     "id": 15,
@@ -189,10 +147,7 @@
     "stnk_date": "2028-12-12",
     "pajak_date": "2026-12-12",
     "ktp": "DJUMAR",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 234,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   },
   {
     "id": 16,
@@ -202,10 +157,7 @@
     "stnk_date": "2028-03-13",
     "pajak_date": "2027-03-13",
     "ktp": "DJUMAR",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 325,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   },
   {
     "id": 17,
@@ -215,10 +167,7 @@
     "stnk_date": "2029-09-09",
     "pajak_date": "2026-09-09",
     "ktp": "LIANG AI LIN",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 140,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   },
   {
     "id": 18,
@@ -228,9 +177,6 @@
     "stnk_date": "2026-06-10",
     "pajak_date": "2026-06-10",
     "ktp": "ELISYA",
-    "status": "warning",
-    "hari_menuju_jatuh_tempo": 49,
-    "warna_status": "warning",
     "catatan": "STNK dan Pajak sama tanggal"
   },
   {
@@ -241,9 +187,6 @@
     "stnk_date": "2026-05-30",
     "pajak_date": "2026-05-30",
     "ktp": "INDRA GUNAWAN",
-    "status": "warning",
-    "hari_menuju_jatuh_tempo": 38,
-    "warna_status": "warning",
     "catatan": "STNK dan Pajak sama tanggal"
   },
   {
@@ -254,9 +197,6 @@
     "stnk_date": "2031-01-19",
     "pajak_date": "2027-01-19",
     "ktp": "NGADIDJAH",
-    "status": "active",
-    "hari_menuju_jatuh_tempo": 272,
-    "warna_status": "success",
-    "catatan": ""
+    "catatan": "STNK lebih lama dari Pajak"
   }
 ]

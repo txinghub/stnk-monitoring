@@ -101,7 +101,10 @@ function updateDashboard(data) {
 function updateTable(data) {
     const tableBody = document.getElementById('vehicleTableBody');
     tableBody.innerHTML = '';
-
+    
+    // Buat nomor urut berurutan
+    let counter = 1;
+    
     data.forEach(vehicle => {
         const row = document.createElement('tr');
         
@@ -127,7 +130,7 @@ function updateTable(data) {
         }
 
         row.innerHTML = `
-            <td>${vehicle.id}</td>
+            <td>${counter}</td>
             <td><strong>${vehicle.merk}</strong></td>
             <td><code>${vehicle.no_polisi}</code></td>
             <td>${vehicle.kategori}</td>
@@ -141,9 +144,20 @@ function updateTable(data) {
             </td>
             <td>${vehicle.ktp}</td>
             <td>${vehicle.catatan || '-'}</td>
+            <td>
+                <div class="aksi-buttons">
+                    <button class="btn btn-action btn-delete" onclick="deleteVehicle(${vehicle.id}, '${vehicle.no_polisi}', '${vehicle.merk}')" title="Hapus kendaraan">
+                        <i class="bi bi-trash"></i> Del
+                    </button>
+                    <button class="btn btn-action btn-update-small" onclick="showUpdateModal(${vehicle.id}, '${vehicle.no_polisi}', '${vehicle.merk}')" title="Update setelah bayar">
+                        <i class="bi bi-arrow-clockwise"></i> Update
+                    </button>
+                </div>
+            </td>
         `;
 
         tableBody.appendChild(row);
+        counter++; // Increment nomor urut
     });
 
     // Inisialisasi atau refresh DataTables
@@ -154,7 +168,7 @@ function updateTable(data) {
     dataTable = $('#vehicleTable').DataTable({
         pageLength: 10,
         lengthMenu: [5, 10, 25, 50],
-        order: [[6, 'asc']], // Urutkan berdasarkan hari menuju jatuh tempo
+        order: [[0, 'asc']], // Urutkan berdasarkan kolom No (nomor urut)
         columnDefs: [
             { width: '50px', targets: 0 }, // No
             { width: '150px', targets: 2 }, // No Polisi - diperlebar
@@ -165,6 +179,7 @@ function updateTable(data) {
             { width: '120px', targets: 7 }, // Status
             { width: '150px', targets: 8 }, // Pemilik
             { width: '200px', targets: 9 }, // Catatan
+            { width: '120px', targets: 10 }, // Aksi
             { 
                 responsivePriority: 1, 
                 targets: [0, 1, 2, 3, 6, 7] // Kolom penting untuk mobile
@@ -175,7 +190,7 @@ function updateTable(data) {
             },
             { 
                 responsivePriority: 3, 
-                targets: [8, 9] // Kolom kurang penting (Pemilik, Catatan)
+                targets: [8, 9, 10] // Kolom kurang penting (Pemilik, Catatan, Aksi)
             }
         ],
         responsive: true,
@@ -453,12 +468,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Auto-refresh setiap 60 detik
     setInterval(fetchData, 60000);
     
-    // Set tanggal default di modal ke hari ini
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById('newStnkDate').value = today;
-    document.getElementById('newPajakDate').value = today;
+    // Event listener untuk modal add vehicle show
+    const addVehicleModal = document.getElementById('addVehicleModal');
+    addVehicleModal.addEventListener('show.bs.modal', function() {
+        // Set tanggal default di modal add ke hari ini
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('newStnkDate').value = today;
+        document.getElementById('newPajakDate').value = today;
+        
+        // Reset form lainnya
+        document.getElementById('newMerk').value = '';
+        document.getElementById('newNoPolisi').value = '';
+        document.getElementById('newKategori').value = 'Roda Dua';
+        document.getElementById('newKtp').value = '';
+        document.getElementById('newCatatan').value = '';
+    });
     
-    // Event listener untuk modal show
+    // Event listener untuk modal update show
     const updateModal = document.getElementById('updateModal');
     updateModal.addEventListener('show.bs.modal', function() {
         // Pre-fill dengan tanggal 1 tahun dari sekarang
@@ -466,8 +492,8 @@ document.addEventListener('DOMContentLoaded', function() {
         nextYear.setFullYear(nextYear.getFullYear() + 1);
         const nextYearStr = nextYear.toISOString().split('T')[0];
         
-        document.getElementById('newStnkDate').value = nextYearStr;
-        document.getElementById('newPajakDate').value = nextYearStr;
+        document.getElementById('updateStnkDate').value = nextYearStr;
+        document.getElementById('updatePajakDate').value = nextYearStr;
     });
 });
 
@@ -500,44 +526,32 @@ function submitAddVehicle() {
     const pajakDateObj = new Date(pajakDate);
     const daysToExpiry = Math.ceil((pajakDateObj - today) / (1000 * 60 * 60 * 24));
     
-    // Tentukan status
-    let status = 'AMAN';
-    let statusColor = 'success';
+    // Tentukan status sesuai dengan data yang ada
+    let status = 'safe';
+    let warna_status = 'success';
+    
     if (daysToExpiry <= 30) {
-        status = 'PERINGATAN';
-        statusColor = 'warning';
+        status = 'priority';
+        warna_status = 'danger';
+    } else if (daysToExpiry <= 90) {
+        status = 'warning';
+        warna_status = 'warning';
     }
-    if (daysToExpiry <= 15) {
-        status = 'PRIORITAS';
-        statusColor = 'danger';
-    }
-    if (daysToExpiry < 0) {
-        status = 'TERLAMBAT';
-        statusColor = 'dark';
-    }
-
-    // Format tanggal untuk display
-    const formatDate = (dateStr) => {
-        const date = new Date(dateStr);
-        const options = { day: 'numeric', month: 'long', year: 'numeric' };
-        return date.toLocaleDateString('id-ID', options);
-    };
-
-    // Buat object kendaraan baru
+    // else tetap 'safe' dan 'success'
+    
+    // Buat object kendaraan baru dengan struktur yang benar
     const newVehicle = {
         id: Date.now(), // ID unik berdasarkan timestamp
         merk: merk,
         no_polisi: noPolisi,
         kategori: kategori,
-        pemilik: pemilik || '-',
-        tanggal_stnk: stnkDate,
-        tanggal_pajak: pajakDate,
-        catatan: catatan || '-',
+        ktp: pemilik || '-',
+        stnk_date: stnkDate,
+        pajak_date: pajakDate,
+        catatan: catatan || '',
         hari_menuju_jatuh_tempo: daysToExpiry,
         status: status,
-        status_color: statusColor,
-        display_stnk: formatDate(stnkDate),
-        display_pajak: formatDate(pajakDate)
+        warna_status: warna_status
     };
 
     // Kirim data ke server
@@ -563,12 +577,7 @@ function submitAddVehicle() {
             
             // Refresh data table
             setTimeout(() => {
-                if (typeof loadData === 'function') {
-                    loadData();
-                }
-                if (typeof updateCharts === 'function') {
-                    updateCharts();
-                }
+                fetchData();
             }, 500);
         } else {
             alert('Gagal menambahkan kendaraan: ' + (data.error || 'Unknown error'));
@@ -599,12 +608,7 @@ function deleteVehicle(vehicleId, plate, merk) {
             
             // Refresh data table
             setTimeout(() => {
-                if (typeof loadData === 'function') {
-                    loadData();
-                }
-                if (typeof updateCharts === 'function') {
-                    updateCharts();
-                }
+                fetchData();
             }, 500);
         } else {
             alert('Gagal menghapus kendaraan: ' + (data.error || 'Unknown error'));
@@ -614,6 +618,41 @@ function deleteVehicle(vehicleId, plate, merk) {
         console.error('Error:', error);
         alert('Terjadi kesalahan saat menghapus kendaraan');
     });
+}
+
+// Fungsi untuk update info kendaraan yang dipilih di dropdown
+function updateSelectedVehicleInfo() {
+    const select = document.getElementById('vehicleSelect');
+    const selectedOption = select.options[select.selectedIndex];
+    const vehicleId = select.value;
+    
+    if (vehicleId) {
+        // Cari data kendaraan
+        const vehicle = vehiclesData.find(v => v.id == vehicleId);
+        if (vehicle) {
+            document.getElementById('selectedVehicleInfo').textContent = 
+                `${vehicle.merk} - ${vehicle.no_polisi}`;
+        }
+    } else {
+        document.getElementById('selectedVehicleInfo').textContent = 
+            'Pilih kendaraan dari dropdown atau klik tombol "Update" di tabel';
+    }
+}
+
+// Fungsi untuk menampilkan modal update untuk kendaraan tertentu
+function showUpdateModal(vehicleId, plate, merk) {
+    // Set nilai di modal update
+    document.getElementById('vehicleSelect').value = vehicleId;
+    document.getElementById('selectedVehicleInfo').textContent = `${merk} - ${plate}`;
+    
+    // Set tanggal hari ini sebagai default
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('newStnkDate').value = today;
+    document.getElementById('newPajakDate').value = today;
+    
+    // Tampilkan modal
+    const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
+    updateModal.show();
 }
 
 // Fungsi untuk menampilkan notifikasi

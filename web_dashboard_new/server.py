@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from urllib.parse import urlparse, parse_qs
 import logging
 
-PORT = 8085  # Port baru untuk menghindari konflik
+PORT = 8086  # Port baru untuk menghindari konflik
 WEB_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_FILE = os.path.join(WEB_DIR, 'data.json')
 BACKUP_DIR = os.path.join(WEB_DIR, 'backups')
@@ -66,8 +66,8 @@ def update_vehicle_status(vehicle):
     """Update vehicle status based on dates"""
     today = datetime.now().date()
     
-    # Handle null dates
-    if vehicle['stnk_date'] is None or vehicle['pajak_date'] is None:
+    # Handle null or empty string dates
+    if vehicle['stnk_date'] is None or vehicle['stnk_date'] == '' or vehicle['pajak_date'] is None or vehicle['pajak_date'] == '':
         vehicle['hari_menuju_jatuh_tempo'] = None
         vehicle['status'] = 'active'
         vehicle['warna_status'] = 'success'
@@ -330,13 +330,13 @@ class CustomHandler(http.server.SimpleHTTPRequestHandler):
                 'merk': new_vehicle.get('merk', ''),
                 'no_polisi': new_vehicle.get('no_polisi', ''),
                 'kategori': new_vehicle.get('kategori', ''),
-                'pemilik': new_vehicle.get('pemilik', '-'),
-                'stnk_date': new_vehicle.get('tanggal_stnk', ''),
-                'pajak_date': new_vehicle.get('tanggal_pajak', ''),
+                'ktp': new_vehicle.get('ktp', '-'),
+                'stnk_date': new_vehicle.get('stnk_date', ''),
+                'pajak_date': new_vehicle.get('pajak_date', ''),
                 'catatan': new_vehicle.get('catatan', '-'),
                 'hari_menuju_jatuh_tempo': new_vehicle.get('hari_menuju_jatuh_tempo', 0),
                 'status': new_vehicle.get('status', 'safe'),
-                'warna_status': new_vehicle.get('status_color', 'success')
+                'warna_status': new_vehicle.get('warna_status', 'success')
             }
             
             # Add to data
