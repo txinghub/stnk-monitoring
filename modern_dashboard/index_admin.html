@@ -978,7 +978,7 @@
         // Auth Check
         async function checkAuth() {
             if (!token) {
-                showLogin();
+                window.location.href = 'login2.html';
                 return;
             }
             try {
@@ -1107,7 +1107,7 @@
             token = null;
             currentUser = null;
             localStorage.removeItem('token');
-            window.location.href = 'login.html';
+            window.location.href = 'login2.html';
         }
         
         // Fetch Data
