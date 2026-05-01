@@ -188,202 +188,17 @@
             min-height: 550px;
             overflow-y: auto;
         }
-
+        
         .chart-title {
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 15px;
             color: #e2e8f0;
         }
-
+        
         .chart-title small {
             color: #64748b;
             font-weight: normal;
-        }
-
-        /* NEW: Circular Progress Cards */
-        .progress-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .progress-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-
-        .progress-ring-container {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            flex-shrink: 0;
-        }
-
-        .progress-ring {
-            transform: rotate(-90deg);
-        }
-
-        .progress-ring-bg {
-            fill: none;
-            stroke: rgba(255,255,255,0.1);
-            stroke-width: 8;
-        }
-
-        .progress-ring-fill {
-            fill: none;
-            stroke-width: 8;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 1s ease-out;
-        }
-
-        .progress-ring-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        .progress-ring-days {
-            font-size: 1rem;
-            font-weight: 700;
-            color: #fff;
-            line-height: 1;
-        }
-
-        .progress-ring-label {
-            font-size: 0.6rem;
-            color: #94a3b8;
-            text-transform: uppercase;
-        }
-
-        .progress-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .progress-info .plate {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
-        }
-
-        .progress-info .merk {
-            font-size: 0.85rem;
-            color: #94a3b8;
-            margin-bottom: 8px;
-        }
-
-        .progress-bar-container {
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            height: 8px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 1s ease-out;
-        }
-
-        .progress-status-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 6px;
-        }
-
-        .progress-status-badge {
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 20px;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
-
-        .progress-status-badge.expired {
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
-        }
-
-        .progress-status-badge.warning {
-            background: rgba(250, 112, 154, 0.2);
-            color: #fa709a;
-        }
-
-        .progress-status-badge.safe {
-            background: rgba(67, 233, 123, 0.2);
-            color: #43e97b;
-        }
-
-        .progress-expire-date {
-            font-size: 0.75rem;
-            color: #64748b;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .section-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section-title i {
-            font-size: 1.2rem;
-        }
-
-        .section-count {
-            font-size: 0.8rem;
-            color: #64748b;
-            background: rgba(255,255,255,0.05);
-            padding: 2px 10px;
-            border-radius: 20px;
-        }
-
-        .status-group {
-            margin-bottom: 30px;
-        }
-
-        .status-group-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-group-title.expired { color: #ff6b6b; }
-        .status-group-title.warning { color: #fa709a; }
-        .status-group-title.safe { color: #43e97b; }
-
-        .count-badge {
-            background: rgba(255,255,255,0.1);
-            padding: 1px 8px;
-            border-radius: 10px;
-            font-size: 0.75rem;
         }
         
         /* Table Container */
@@ -626,23 +441,19 @@
                     </div>
                 </div>
             </div>
-
-            <!-- NEW: Circular Progress Dashboard -->
-            <div class="row g-4 mb-4" id="circularDashboard">
+            
+            <!-- Bar Charts Row -->
+            <div class="row g-4 mb-4">
                 <div class="col-lg-6">
                     <div class="chart-container" data-aos="fade-up" data-aos-delay="200">
-                        <div class="section-header">
-                            <div class="section-title"><i class="bi bi-car-front"></i>Sisa Hari STNK <small id="stnkTotal"></small></div>
-                        </div>
-                        <div id="stnkProgressCards"></div>
+                        <div class="chart-title"><i class="bi bi-bar-chart me-2"></i>Sisa Hari STNK <small id="stnkTotal"></small></div>
+                        <canvas id="stnkDaysChart"></canvas>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="chart-container" data-aos="fade-up" data-aos-delay="250">
-                        <div class="section-header">
-                            <div class="section-title"><i class="bi bi-receipt"></i>Sisa Hari PAJAK <small id="pajakTotal"></small></div>
-                        </div>
-                        <div id="pajakProgressCards"></div>
+                        <div class="chart-title"><i class="bi bi-bar-chart me-2"></i>Sisa Hari PAJAK <small id="pajakTotal"></small></div>
+                        <canvas id="pajakDaysChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -1137,158 +948,107 @@
             document.getElementById('expiredStnk').textContent = expiredStnk;
         }
         
-        // Update Charts - Circular Progress Cards
+        // Update Charts
         function updateCharts(vehicles) {
-            const RADIUS = 34;
-            const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
-            // Helper: get status class and color
-            function getStnkStatus(days) {
-                if (days <= 0) return { cls: 'expired', color: '#ff6b6b', gradient: '#ff6b6b' };
-                if (days <= 365) return { cls: 'warning', color: '#fa709a', gradient: '#fa709a' };
-                return { cls: 'safe', color: '#43e97b', gradient: '#43e97b' };
-            }
-
-            function getPajakStatus(days) {
-                if (days <= 0) return { cls: 'expired', color: '#ff6b6b', gradient: '#ff6b6b' };
-                if (days <= 30) return { cls: 'warning', color: '#fa709a', gradient: '#fa709a' };
-                return { cls: 'safe', color: '#43e97b', gradient: '#43e97b' };
-            }
-
-            // Helper: format days to readable
-            function formatDays(days, maxDays) {
-                if (days <= 0) return { text: 'Expired', percent: 0 };
-                const percent = Math.min(100, Math.round((days / maxDays) * 100));
-                if (maxDays === 1825) { // STNK 5 years
-                    const years = Math.floor(days / 365);
-                    const months = Math.floor((days % 365) / 30);
-                    const text = years > 0 ? `${years}thn ${months}bln` : `${months}bln`;
-                    return { text, percent };
-                } else { // PAJAK 1 year
-                    const months = Math.floor(days / 30);
-                    const d = days % 30;
-                    const text = months > 0 ? `${months}bln ${d}hr` : `${d}hr`;
-                    return { text, percent };
-                }
-            }
-
-            // Helper: format date
-            function formatDate(dateStr) {
-                if (!dateStr) return '-';
-                try {
-                    const d = new Date(dateStr);
-                    return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                } catch { return dateStr; }
-            }
-
-            // Render STNK cards
-            let stnkHtml = '';
-            const expiredStnk = [], warningStnk = [], safeStnk = [];
-
-            vehicles.forEach(v => {
-                const days = v.stnk_days;
-                const status = getStnkStatus(days);
-                const info = formatDays(days, 1825);
-                const progress = days <= 0 ? 0 : Math.min(100, Math.round((days / 1825) * 100));
-                const offset = CIRCUMFERENCE - (progress / 100) * CIRCUMFERENCE;
-
-                const card = `
-                <div class="progress-card">
-                    <div class="progress-ring-container">
-                        <svg class="progress-ring" width="80" height="80">
-                            <circle class="progress-ring-bg" cx="40" cy="40" r="${RADIUS}"/>
-                            <circle class="progress-ring-fill" cx="40" cy="40" r="${RADIUS}"
-                                stroke="${status.color}"
-                                stroke-dasharray="${CIRCUMFERENCE}"
-                                stroke-dashoffset="${offset}"/>
-                        </svg>
-                        <div class="progress-ring-text">
-                            <div class="progress-ring-days">${info.text}</div>
-                            <div class="progress-ring-label">hari</div>
-                        </div>
-                    </div>
-                    <div class="progress-info">
-                        <div class="plate">${v['No.Polisi']}</div>
-                        <div class="merk">${v.MERK || v.merk || '-'} &bull; ${v.Jenis || v.jenis || '-'}</div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width:${progress}%; background:${status.color};"></div>
-                        </div>
-                        <div class="progress-status-row">
-                            <span class="progress-status-badge ${status.cls}">${status.cls === 'expired' ? 'Expired' : status.cls === 'warning' ? 'Akan Expired' : 'Valid'}</span>
-                            <span class="progress-expire-date">Exp: ${formatDate(v.STNK || v.stnk_exp)}</span>
-                        </div>
-                    </div>
-                </div>`;
-
-                if (days <= 0) expiredStnk.push(card);
-                else if (days <= 365) warningStnk.push(card);
-                else safeStnk.push(card);
-            });
-
-            // Build STNK section
-            stnkHtml = '';
-            if (expiredStnk.length) stnkHtml += `<div class="status-group"><div class="status-group-title expired"><i class="bi bi-x-circle"></i> Expired<span class="count-badge">${expiredStnk.length}</span></div>${expiredStnk.join('')}</div>`;
-            if (warningStnk.length) stnkHtml += `<div class="status-group"><div class="status-group-title warning"><i class="bi bi-exclamation-circle"></i> Akan Expired<span class="count-badge">${warningStnk.length}</span></div>${warningStnk.join('')}</div>`;
-            if (safeStnk.length) stnkHtml += `<div class="status-group"><div class="status-group-title safe"><i class="bi bi-check-circle"></i> Valid<span class="count-badge">${safeStnk.length}</span></div>${safeStnk.join('')}</div>`;
-            if (!stnkHtml) stnkHtml = '<div style="color:#64748b;text-align:center;padding:40px;">Tidak ada data</div>';
-
-            // Render PAJAK cards
-            let pajakHtml = '';
-            const expiredPajak = [], warningPajak = [], safePajak = [];
-
-            vehicles.forEach(v => {
-                const days = v.pajak_days;
-                const status = getPajakStatus(days);
-                const info = formatDays(days, 365);
-                const progress = days <= 0 ? 0 : Math.min(100, Math.round((days / 365) * 100));
-                const offset = CIRCUMFERENCE - (progress / 100) * CIRCUMFERENCE;
-
-                const card = `
-                <div class="progress-card">
-                    <div class="progress-ring-container">
-                        <svg class="progress-ring" width="80" height="80">
-                            <circle class="progress-ring-bg" cx="40" cy="40" r="${RADIUS}"/>
-                            <circle class="progress-ring-fill" cx="40" cy="40" r="${RADIUS}"
-                                stroke="${status.color}"
-                                stroke-dasharray="${CIRCUMFERENCE}"
-                                stroke-dashoffset="${offset}"/>
-                        </svg>
-                        <div class="progress-ring-text">
-                            <div class="progress-ring-days">${info.text}</div>
-                            <div class="progress-ring-label">hari</div>
-                        </div>
-                    </div>
-                    <div class="progress-info">
-                        <div class="plate">${v['No.Polisi']}</div>
-                        <div class="merk">${v.MERK || v.merk || '-'} &bull; ${v.Jenis || v.jenis || '-'}</div>
-                        <div class="progress-bar-container">
-                            <div class="progress-bar-fill" style="width:${progress}%; background:${status.color};"></div>
-                        </div>
-                        <div class="progress-status-row">
-                            <span class="progress-status-badge ${status.cls}">${status.cls === 'expired' ? 'Expired' : status.cls === 'warning' ? 'Akan Expired' : 'Valid'}</span>
-                            <span class="progress-expire-date">Exp: ${formatDate(v.PAJAK || v.pajak_exp)}</span>
-                        </div>
-                    </div>
-                </div>`;
-
-                if (days <= 0) expiredPajak.push(card);
-                else if (days <= 30) warningPajak.push(card);
-                else safePajak.push(card);
-            });
-
-            // Build PAJAK section
-            pajakHtml = '';
-            if (expiredPajak.length) pajakHtml += `<div class="status-group"><div class="status-group-title expired"><i class="bi bi-x-circle"></i> Expired<span class="count-badge">${expiredPajak.length}</span></div>${expiredPajak.join('')}</div>`;
-            if (warningPajak.length) pajakHtml += `<div class="status-group"><div class="status-group-title warning"><i class="bi bi-exclamation-circle"></i> Akan Expired<span class="count-badge">${warningPajak.length}</span></div>${warningPajak.join('')}</div>`;
-            if (safePajak.length) pajakHtml += `<div class="status-group"><div class="status-group-title safe"><i class="bi bi-check-circle"></i> Valid<span class="count-badge">${safePajak.length}</span></div>${safePajak.join('')}</div>`;
-            if (!pajakHtml) pajakHtml = '<div style="color:#64748b;text-align:center;padding:40px;">Tidak ada data</div>';
-
-            document.getElementById('stnkProgressCards').innerHTML = stnkHtml;
-            document.getElementById('pajakProgressCards').innerHTML = pajakHtml;
+            // STNK: convert days to years (max 5 years = 1825 days)
+            const stnkYearsData = vehicles.map(v => ({ 
+                no_polisi: v['No.Polisi'], 
+                years: Math.round(v.stnk_days / 365 * 10) / 10  // Convert to years with 1 decimal
+            })).sort((a, b) => a.years - b.years);
+            
+            // PAJAK: stays in days (max 365 days = 1 year)
+            const pajakDaysData = vehicles.map(v => ({ 
+                no_polisi: v['No.Polisi'], 
+                days: v.pajak_days 
+            })).sort((a, b) => a.days - b.days);
+            
             document.getElementById('stnkTotal').textContent = `(${vehicles.length} kendaraan, masa 5 tahun)`;
             document.getElementById('pajakTotal').textContent = `(${vehicles.length} kendaraan, masa 1 tahun)`;
+            
+            if (stnkDaysChart) stnkDaysChart.destroy();
+            stnkDaysChart = new Chart(document.getElementById('stnkDaysChart'), {
+                type: 'bar',
+                data: {
+                    labels: stnkYearsData.map(d => d.no_polisi),
+                    datasets: [{
+                        label: 'Sisa STNK',
+                        data: stnkYearsData.map(d => d.years),
+                        backgroundColor: stnkYearsData.map(d => d.years < 0 ? '#ff6b6b' : d.years < 1 ? '#fa709a' : '#43e97b'),
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: 'y',
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const years = Math.floor(context.raw);
+                                    const months = Math.round((context.raw - years) * 12);
+                                    return ` ${years}tahun ${months}bulan`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            grid: { color: 'rgba(255,255,255,0.05)' }, 
+                            ticks: { color: '#94a3b8', stepSize: 1 },
+                            max: 5
+                        },
+                        y: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    },
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.6,
+                    barThickness: 25,
+                    maxBarThickness: 25
+                }
+            });
+            
+            if (pajakDaysChart) pajakDaysChart.destroy();
+            pajakDaysChart = new Chart(document.getElementById('pajakDaysChart'), {
+                type: 'bar',
+                data: {
+                    labels: pajakDaysData.map(d => d.no_polisi),
+                    datasets: [{
+                        label: 'Sisa PAJAK',
+                        data: pajakDaysData.map(d => d.days),
+                        backgroundColor: pajakDaysData.map(d => d.days < 0 ? '#ff6b6b' : d.days < 30 ? '#fa709a' : '#43e97b'),
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: 'y',
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const months = Math.floor(context.raw / 30);
+                                    const days = context.raw % 30;
+                                    return months > 0 ? ` ${months}bulan ${days}hari` : ` ${days}hari`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            grid: { color: 'rgba(255,255,255,0.05)' }, 
+                            ticks: { color: '#94a3b8' },
+                            max: 365
+                        },
+                        y: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                    },
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.6,
+                    barThickness: 25,
+                    maxBarThickness: 25
+                }
+            });
         }
-        
         
         // Update Table
         function updateTable(vehicles) {
