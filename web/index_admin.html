@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STNK & PAJAK MONITORING - Modern Dashboard</title>
+    
+    <!-- Bootstrap 5 Dark Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --danger-gradient: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --sidebar-bg: #111827;
+        }
+        
+        body {
+            background: var(--dark-bg);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--sidebar-bg);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            padding: 2rem 1.5rem;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+        
+        .sidebar-logo {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-link {
+            color: #94a3b8;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            transform: translateX(5px);
+        }
+        
+        .nav-link i {
+            width: 24px;
+            margin-right: 10px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 2rem;
+        }
+        
+        /* Header */
+        .dashboard-header {
+            background: var(--primary-gradient);
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: float 20s linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Stats Cards */
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+        
+        .stat-card.safe::before { background: var(--success-gradient); }
+        .stat-card.warning::before { background: var(--warning-gradient); }
+        .stat-card.priority::before { background: var(--danger-gradient); }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-card.safe .stat-icon { background: rgba(67, 233, 123, 0.1); color: #43e97b; }
+        .stat-card.warning .stat-icon { background: rgba(250, 112, 154, 0.1); color: #fa709a; }
+        .stat-card.priority .stat-icon { background: rgba(255, 8, 68, 0.1); color: #ff0844; }
+        
+        /* Charts Container */
+        .charts-container {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Table Styling */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dataTables_wrapper {
+            color: #e2e8f0;
+        }
+        
+        .dataTables_wrapper .dataTables_length select,
+        .dataTables_wrapper .dataTables_filter input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: #e2e8f0 !important;
+            border-radius: 0.5rem !important;
+            margin: 0 2px;
+        }
+        
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: var(--primary-gradient) !important;
+            border: none !important;
+        }
+        
+        /* Status Badges */
+        .badge-status {
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .badge-status.safe {
+            background: rgba(67, 233, 123, 0.2);
+            color: #43e97b;
+            border: 1px solid rgba(67, 233, 123, 0.3);
+        }
+        
+        .badge-status.warning {
+            background: rgba(250, 112, 154, 0.2);
+            color: #fa709a;
+            border: 1px solid rgba(250, 112, 154, 0.3);
+        }
+        
+        .badge-status.priority {
+            background: rgba(255, 8, 68, 0.2);
+            color: #ff0844;
+            border: 1px solid rgba(255, 8, 68, 0.3);
+        }
+        
+        /* Update Button */
+        .btn-update {
+            background: var(--primary-gradient);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-update:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        /* Modal Styling */
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.25);
+            color: #e2e8f0;
+        }
+        
+        /* License Plate Styling */
+        .license-plate {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border: 2px solid #475569;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #f8fafc;
+            display: inline-block;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                padding: 1rem;
+            }
+            
+            .sidebar-logo span {
+                display: none;
+            }
+            
+            .nav-link span {
+                display: none;
+            }
+            
+            .nav-link i {
+                margin-right: 0;
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .dashboard-header {
+                padding: 1.5rem;
+            }
+            
+            .stat-card, .charts-container, .table-container {
+                padding: 1rem;
+            }
+        }
+        
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+        }
+        
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <i class="bi bi-car-front-fill"></i> <span>STNK PRO</span>
+        </div>
+        
+        <nav class="nav flex-column">
+            <a class="nav-link active" href="#">
+                <i class="bi bi-speedometer2"></i>
+                <span>Dashboard</span>
+            </a>
+            <a class="nav-link" href="#">
+                <i class="bi bi-car-front"></i>
+                <span>Kendaraan</span>
+            </a>
+            <a class="nav-link" href="#">
+                <i class="bi bi-calendar-check"></i>
+                <span>Kalender</span>
+            </a>
+            <a class="nav-link" href="#">
+                <i class="bi bi-graph-up"></i>
+                <span>Analytics</span>
+            </a>
+            <a class="nav-link" href="#">
+                <i class="bi bi-bell"></i>
+                <span>Notifikasi</span>
+                <span class="badge bg-danger ms-auto">3</span>
+            </a>
+            <a class="nav-link" href="#">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+        
+        <div class="mt-auto">
+            <div class="card bg-dark border-0 mt-4">
+                <div class="card-body p-3">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            <div class="bg-primary rounded-circle p-2">
+                                <i class="bi bi-shield-check text-white"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <small class="text-muted">System Status</small>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-success rounded-circle me-2" style="width: 8px; height: 8px;"></div>
+                                <small class="text-success">All Systems Operational</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="dashboard-header fade-in">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-5 fw-bold mb-3">
+                        <i class="bi bi-speedometer2 me-2"></i>
+                        STNK & PAJAK MONITORING
+                    </h1>
+                    <p class="lead mb-0 opacity-75">
+                        Dashboard monitoring kendaraan dengan desain modern dan real-time updates
+                    </p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn-update pulse" data-bs-toggle="modal" data-bs-target="#updateModal">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        UPDATE SETELAH BAYAR
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="row" data-aos="fade-up">
+            <div class="col-md-4">
+                <div class="stat-card safe">
+                    <div class="stat-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <h3 class="stat-count" id="safeCount">0</h3>
+                    <p class="text-muted mb-0">Kendaraan Aman</p>
+                    <small class="text-success">> 90 hari</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card warning">
+                    <div class="stat-icon">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="stat-count" id="warningCount">0</h3>
+                    <p class="text-muted mb-0">Perlu Perhatian</p>
+                    <small class="text-warning">31-90 hari</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card priority">
+                    <div class="stat-icon">
+                        <i class="bi bi-exclamation-octagon"></i>
+                    </div>
+                    <h3 class="stat-count" id="priorityCount">0</h3>
+                    <p class="text-muted mb-0">Prioritas Tinggi</p>
+                    <small class="text-danger">≤ 30 hari</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts -->
+        <div class="charts-container fade-in" data-aos="fade-up" data-aos-delay="100">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="mb-3"><i class="bi bi-pie-chart me-2"></i>Distribusi Status</h4>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="mb-3"><i class="bi bi-cash-stack me-2"></i>Pajak (Hari)</h4>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="pajakChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="mb-3"><i class="bi bi-calendar-check me-2"></i>STNK (Tahun)</h4>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="stnkChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Table -->
+        <div class="table-container fade-in" data-aos="fade-up" data-aos-delay="200">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="mb-0"><i class="bi bi-table me-2"></i>Data Kendaraan</h4>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary" onclick="refreshData()">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
+                    <button class="btn btn-outline-primary" onclick="exportData()">
+                        <i class="bi bi-download"></i> Export
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table id="vehicleTable" class="table table-dark table-hover" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Merk</th>
+                            <th>No Polisi</th>
+                            <th>Kategori</th>
+                            <th>STNK</th>
+                            <th>Pajak</th>
+                            <th>Status</th>
+                            <th>Hari Tersisa</th>
+                            <th>Pemilik</th>
+                            <th>Catatan</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vehicleTableBody">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-4 text-center text-muted">
+            <p class="mb-0">
+                <small>
+                    <i class="bi bi-c-circle"></i> 2026 STNK Monitoring System v2.0 | 
+                    <span id="lastUpdate">Terakhir diperbarui: -</span>
+                </small>
+            </p>
+        </footer>
+    </div>
+    
+    <!-- Update Modal -->
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateModalLabel">
+                        <i class="bi bi-arrow-clockwise me-2"></i>
+                        Update Data Setelah Bayar
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Sistem akan membuat backup otomatis sebelum melakukan update.
+                    </div>
+                    
+                    <form id="updateForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="vehicleSelect" class="form-label">Pilih Kendaraan</label>
+                                <select class="form-select" id="vehicleSelect" required>
+                                    <option value="">Pilih kendaraan...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="currentInfo" class="form-label">Info Saat Ini</label>
+                                <div id="currentInfo" class="form-control bg-dark">
+                                    <small class="text-muted">Pilih kendaraan untuk melihat info</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="newStnkDate" class="form-label">Tanggal STNK Baru</label>
+                                <input type="date" class="form-control" id="newStnkDate" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="newPajakDate" class="form-label">Tanggal Pajak Baru</label>
+                                <input type="date" class="form-control" id="newPajakDate" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="updateNote" class="form-label">Catatan Update</label>
+                            <textarea class="form-control" id="updateNote" rows="3" placeholder="Tambahkan catatan jika perlu..."></textarea>
+                        </div>
+                        
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Pastikan tanggal yang dimasukkan sudah benar. Update tidak dapat dibatalkan.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn-update" onclick="submitUpdate()">
+                        <span id="updateButtonText">Update Data</span>
+                        <span id="updateSpinner" class="loading-spinner d-none"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <i class="bi bi-check-circle me-2"></i>
+                <strong class="me-auto">Berhasil!</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body bg-dark">
+                Data berhasil diperbarui.
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <!-- Main JavaScript -->
+    <script src="script.js"></script>
+    
+    <script>
+        // Initialize AOS animations
+        AOS.init({
+            duration: 800,
+            once: true,
+            offset: 100
+        });
+        
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Initialize toasts
+        var toastEl = document.getElementById('successToast');
+        var toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+        
+        function showSuccessToast(message) {
+            document.querySelector('.toast-body').textContent = message || 'Data berhasil diperbarui.';
+            toast.show();
+        }
+    </script>
+</body>
+</html>

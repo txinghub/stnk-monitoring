@@ -60,8 +60,7 @@ function initDataTable() {
             { width: '100px', targets: 7 }, // Hari Tersisa
             { responsivePriority: 1, targets: [0, 1, 2, 6, 7] }, // Priority columns for mobile
             { responsivePriority: 2, targets: [3, 4, 5] },
-            { responsivePriority: 3, targets: [8, 9] }, // Hide on mobile
-            { responsivePriority: 4, targets: [10], orderable: false } // Aksi - no sorting
+            { responsivePriority: 3, targets: [8, 9] } // Hide on mobile
         ]
     });
 }
@@ -71,7 +70,7 @@ async function fetchData() {
     try {
         showLoading(true);
         
-        const response = await fetch(`${API_BASE}/api/data`);
+        const response = await fetch(`${API_BASE}/api/enriched`);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const data = await response.json();
@@ -81,7 +80,6 @@ async function fetchData() {
         updateCharts(data);
         updateStats(data);
         updateLastUpdate();
-        initKalenderTahun();
         
         showLoading(false);
         
@@ -128,16 +126,6 @@ function updateDashboard(data) {
             </td>
             <td>${vehicle.KTP || vehicle.ktp || '-'}</td>
             <td>${vehicle.catatan || '-'}</td>
-            <td>
-                <div class="d-flex gap-1">
-                    <button class="btn btn-sm btn-outline-primary" title="Edit" onclick="openEditModal(${vehicle.id})">
-                        <i class="bi bi-pencil"></i>
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger" title="Hapus" onclick="openDeleteModal(${vehicle.id})">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </div>
-            </td>
         `;
         
         tableBody.appendChild(row);
@@ -166,11 +154,14 @@ function updateStatusChart(data) {
     let safeCount = 0;
     let warningCount = 0;
     let priorityCount = 0;
+    let expiredCount = 0;
     let unknownCount = 0;
     
     data.forEach(vehicle => {
         const days = vehicle.days_to_expiry || 9999;
-        if (days <= 30) {
+        if (days <= 0) {
+            expiredCount++;
+        } else if (days <= 30) {
             priorityCount++;
         } else if (days <= 90) {
             warningCount++;
@@ -190,20 +181,22 @@ function updateStatusChart(data) {
     statusChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Aman', 'Perhatian', 'Prioritas', 'Tidak Diketahui'],
+            labels: ['Aman', 'Perhatian', 'Prioritas', 'Expired', 'Tidak Diketahui'],
             datasets: [{
-                data: [safeCount, warningCount, priorityCount, unknownCount],
+                data: [safeCount, warningCount, priorityCount, expiredCount, unknownCount],
                 backgroundColor: [
                     'rgba(67, 233, 123, 0.8)',
                     'rgba(250, 112, 154, 0.8)',
                     'rgba(255, 8, 68, 0.8)',
-                    'rgba(128, 128, 128, 0.8)'  // Gray for unknown
+                    'rgba(150, 150, 150, 0.8)',  // Gray for expired
+                    'rgba(128, 128, 128, 0.8)'   // Gray for unknown
                 ],
                 borderColor: [
                     'rgba(67, 233, 123, 1)',
                     'rgba(250, 112, 154, 1)',
                     'rgba(255, 8, 68, 1)',
-                    'rgba(128, 128, 128, 1)'  // Gray for unknown
+                    'rgba(150, 150, 150, 1)',
+                    'rgba(128, 128, 128, 1)'
                 ],
                 borderWidth: 2,
                 hoverOffset: 15
@@ -404,7 +397,6 @@ function updateStats(data) {
     let safeCount = 0;
     let warningCount = 0;
     let priorityCount = 0;
-    let unknownCount = 0;
     
     data.forEach(vehicle => {
         const days = vehicle.days_to_expiry || 9999;
@@ -414,16 +406,14 @@ function updateStats(data) {
             warningCount++;
         } else if (days < 9999) { // Not unknown
             safeCount++;
-        } else {
-            unknownCount++;
         }
+        // Unknown (days === 9999) not counted
     });
     
     // Animate count up
     animateCount('safeCount', safeCount);
     animateCount('warningCount', warningCount);
     animateCount('priorityCount', priorityCount);
-    animateCount('unknownCount', unknownCount);
 }
 
 // Store animation timers
@@ -714,6 +704,7 @@ function getStatusText(status) {
         'alert': 'Perhatian',
         'priority': 'Prioritas',
         'prioritas': 'Prioritas',
+        'expired': 'Expired',
         'unknown': 'Tidak Diketahui'
     };
     return texts[status] || status;
@@ -723,7 +714,9 @@ function createStatusBadge(status, days) {
     // Determine actual status based on days_to_expiry
     let actualStatus = status;
     if (days !== undefined && days !== null) {
-        if (days <= 30) {
+        if (days <= 0) {
+            actualStatus = 'expired';
+        } else if (days <= 30) {
             actualStatus = 'priority';
         } else if (days <= 90) {
             actualStatus = 'warning';
@@ -737,6 +730,7 @@ function createStatusBadge(status, days) {
     const text = getStatusText(actualStatus);
     const icon = actualStatus === 'safe' ? 'bi-check-circle' : 
                  actualStatus === 'warning' ? 'bi-exclamation-triangle' : 
+                 actualStatus === 'expired' ? 'bi-clock-history' :
                  actualStatus === 'priority' ? 'bi-exclamation-octagon' :
                  'bi-question-circle';
     
@@ -751,6 +745,7 @@ function getStatusRowClass(status) {
     if (status === 'aman' || status === 'safe') return 'status-safe';
     if (status === 'perhatian' || status === 'warning' || status === 'alert') return 'status-warning';
     if (status === 'prioritas' || status === 'priority') return 'status-priority';
+    if (status === 'expired') return 'status-expired';
     if (status === 'unknown') return 'status-unknown';
     return `status-${status}`;
 }
@@ -766,6 +761,7 @@ function getProgressBarClass(status) {
         'safe': 'bg-success',
         'warning': 'bg-warning',
         'priority': 'bg-danger',
+        'expired': 'bg-dark',
         'unknown': 'bg-secondary'
     };
     return classes[actualStatus] || '';
@@ -929,305 +925,3 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-// ============================================================
-// ADD VEHICLE
-// ============================================================
-async function submitAdd() {
-    const merk = document.getElementById('addMerk').value.trim();
-    const no_polisi = document.getElementById('addNoPolisi').value.trim();
-    const jenis = document.getElementById('addJenis').value.trim();
-    const ktp = document.getElementById('addKtp').value.trim();
-    const stnk = document.getElementById('addStnk').value;
-    const pajak = document.getElementById('addPajak').value;
-    const catatan = document.getElementById('addCatatan').value.trim();
-
-    if (!merk || !no_polisi) {
-        alert('Merk dan No Polisi wajib diisi!');
-        return;
-    }
-
-    const btnText = document.getElementById('addButtonText');
-    const spinner = document.getElementById('addSpinner');
-    const button = document.querySelector('#addModal .btn-update');
-    button.disabled = true;
-    btnText.textContent = 'Menyimpan...';
-    spinner.classList.remove('d-none');
-
-    try {
-        const response = await fetch(`${API_BASE}/api/add`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ merk, no_polisi, jenis, ktp, stnk, pajak, catatan })
-        });
-        if (!response.ok) throw new Error(await response.text());
-        showSuccessToast('Kendaraan berhasil ditambahkan!');
-        bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
-        document.getElementById('addForm').reset();
-        setTimeout(fetchData, 500);
-    } catch (error) {
-        console.error('Add error:', error);
-        alert('Gagal menambah data: ' + error.message);
-    } finally {
-        button.disabled = false;
-        btnText.textContent = 'Tambah Kendaraan';
-        spinner.classList.add('d-none');
-    }
-}
-
-// ============================================================
-// EDIT VEHICLE
-// ============================================================
-function openEditModal(id) {
-    const vehicle = vehicleData.find(v => v.id == id);
-    if (!vehicle) return;
-
-    document.getElementById('editId').value = vehicle.id;
-    document.getElementById('editMerk').value = vehicle.MERK || vehicle.merk || '';
-    document.getElementById('editNoPolisi').value = vehicle['No.Polisi'] || vehicle.no_polisi || '';
-    document.getElementById('editJenis').value = vehicle.Jenis || vehicle.kategori || '';
-    document.getElementById('editKtp').value = vehicle.KTP || vehicle.ktp || '';
-    document.getElementById('editStnk').value = vehicle.STNK || vehicle.stnk_date || '';
-    document.getElementById('editPajak').value = vehicle.PAJAK || vehicle.pajak_date || '';
-    document.getElementById('editCatatan').value = vehicle.catatan || '';
-
-    new bootstrap.Modal(document.getElementById('editModal')).show();
-}
-
-async function submitEdit() {
-    const id = parseInt(document.getElementById('editId').value);
-    const merk = document.getElementById('editMerk').value.trim();
-    const no_polisi = document.getElementById('editNoPolisi').value.trim();
-    const jenis = document.getElementById('editJenis').value.trim();
-    const ktp = document.getElementById('editKtp').value.trim();
-    const stnk = document.getElementById('editStnk').value;
-    const pajak = document.getElementById('editPajak').value;
-    const catatan = document.getElementById('editCatatan').value.trim();
-
-    if (!merk || !no_polisi) {
-        alert('Merk dan No Polisi wajib diisi!');
-        return;
-    }
-
-    const btnText = document.getElementById('editButtonText');
-    const spinner = document.getElementById('editSpinner');
-    const button = document.querySelector('#editModal .btn-update');
-    button.disabled = true;
-    btnText.textContent = 'Menyimpan...';
-    spinner.classList.remove('d-none');
-
-    try {
-        const response = await fetch(`${API_BASE}/api/edit`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id, merk, no_polisi, jenis, ktp, stnk, pajak, catatan })
-        });
-        if (!response.ok) throw new Error(await response.text());
-        showSuccessToast('Data kendaraan berhasil diedit!');
-        bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
-        setTimeout(fetchData, 500);
-    } catch (error) {
-        console.error('Edit error:', error);
-        alert('Gagal mengedit data: ' + error.message);
-    } finally {
-        button.disabled = false;
-        btnText.textContent = 'Simpan Perubahan';
-        spinner.classList.add('d-none');
-    }
-}
-
-// ============================================================
-// DELETE VEHICLE
-// ============================================================
-function openDeleteModal(id) {
-    const vehicle = vehicleData.find(v => v.id == id);
-    if (!vehicle) return;
-
-    document.getElementById('deleteId').value = vehicle.id;
-    document.getElementById('deleteVehicleInfo').innerHTML =
-        `<strong>${vehicle.MERK || vehicle.merk}</strong> - <span class="license-plate">${vehicle['No.Polisi'] || vehicle.no_polisi}</span>`;
-
-    new bootstrap.Modal(document.getElementById('deleteModal')).show();
-}
-
-async function submitDelete() {
-    const id = parseInt(document.getElementById('deleteId').value);
-
-    const btnText = document.getElementById('deleteButtonText');
-    const spinner = document.getElementById('deleteSpinner');
-    const button = document.querySelector('#deleteModal .btn-danger');
-    button.disabled = true;
-    btnText.textContent = 'Menghapus...';
-    spinner.classList.remove('d-none');
-
-    try {
-        const response = await fetch(`${API_BASE}/api/delete`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id })
-        });
-        if (!response.ok) throw new Error(await response.text());
-        showSuccessToast('Kendaraan berhasil dihapus! Backup telah dibuat.');
-        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-        setTimeout(fetchData, 500);
-    } catch (error) {
-        console.error('Delete error:', error);
-        alert('Gagal menghapus data: ' + error.message);
-    } finally {
-        button.disabled = false;
-        btnText.textContent = 'Ya, Hapus';
-        spinner.classList.add('d-none');
-    }
-}
-
-// ============================================================
-// STATUS FILTER
-// ============================================================
-function applyStatusFilter() {
-    const filterValue = document.getElementById('statusFilter').value;
-    if (!dataTable) return;
-
-    if (filterValue === '') {
-        dataTable.column(6).search('').draw();
-    } else {
-        // Use regex to match the status text in column 6
-        const statusTexts = {
-            'safe': 'Aman',
-            'warning': 'Perhatian',
-            'priority': 'Prioritas',
-            'unknown': 'Tidak Diketahui'
-        };
-        dataTable.column(6).search(statusTexts[filterValue] || filterValue, true, false).draw();
-    }
-}
-
-// ============================================================
-// SIDEBAR NAVIGATION
-// ============================================================
-let currentPage = 'dashboard';
-
-function showPage(page) {
-    currentPage = page;
-    
-    // Update sidebar active state
-    document.querySelectorAll('.sidebar .nav-link').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll(`.sidebar .nav-link[onclick*="${page}"]`).forEach(el => el.classList.add('active'));
-    
-    if (page === 'dashboard') {
-        document.getElementById('statsRow').style.display = '';
-        document.getElementById('tableContainer').style.display = '';
-        document.getElementById('chartsSection').style.display = '';
-        document.getElementById('kalenderSection').style.display = 'none';
-    } else if (page === 'kendaraan') {
-        document.getElementById('statsRow').style.display = '';
-        document.getElementById('tableContainer').style.display = '';
-        document.getElementById('chartsSection').style.display = 'none';
-        document.getElementById('kalenderSection').style.display = 'none';
-        setTimeout(() => {
-            document.getElementById('tableContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-    } else if (page === 'kalender') {
-        document.getElementById('statsRow').style.display = 'none';
-        document.getElementById('tableContainer').style.display = 'none';
-        document.getElementById('chartsSection').style.display = 'none';
-        document.getElementById('kalenderSection').style.display = '';
-        renderKalender();
-        setTimeout(() => {
-            document.getElementById('kalenderSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-    } else if (page === 'analytics') {
-        document.getElementById('statsRow').style.display = 'none';
-        document.getElementById('tableContainer').style.display = 'none';
-        document.getElementById('chartsSection').style.display = '';
-        document.getElementById('kalenderSection').style.display = 'none';
-        setTimeout(() => {
-            document.getElementById('chartsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-    }
-}
-
-// ============================================================
-// KALENDER FUNCTIONS
-function initKalenderTahun() {
-    const yearSelect = document.getElementById('kalenderTahun');
-    if (!yearSelect) return; // Skip if element doesn't exist
-    const now = new Date();
-    yearSelect.innerHTML = '';
-    for (let y = now.getFullYear() - 1; y <= now.getFullYear() + 3; y++) {
-        const opt = document.createElement('option');
-        opt.value = y;
-        opt.textContent = y;
-        if (y === now.getFullYear()) opt.selected = true;
-        yearSelect.appendChild(opt);
-    }
-}
-
-function setBulanSekarang() {
-    const now = new Date();
-    document.getElementById('kalenderBulan').value = now.getMonth() + 1;
-    document.getElementById('kalenderTahun').value = now.getFullYear();
-    renderKalender();
-}
-
-function renderKalender() {
-    const bulan = parseInt(document.getElementById('kalenderBulan').value);
-    const tahun = parseInt(document.getElementById('kalenderTahun').value);
-    const tbody = document.getElementById('kalenderBody');
-    tbody.innerHTML = '';
-    
-    const items = [];
-    vehicleData.forEach((v, idx) => {
-        const stnk = v.STNK || v.stnk_date || '';
-        const pajak = v.PAJAK || v.pajak_date || '';
-        const noPol = v['No.Polisi'] || v.no_polisi || '-';
-        const merk = v.MERK || v.merk || '-';
-        const jenis = v.Jenis || v.kategori || '-';
-        
-        // STNK
-        if (stnk) {
-            const d = new Date(stnk + 'T00:00:00');
-            if (!isNaN(d.getTime()) && (d.getMonth() + 1) === bulan && d.getFullYear() === tahun) {
-                const days = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
-                items.push({ noPol, merk, jenis, tanggal: stnk, tipe: 'STNK', days, status: getStatusBadge(days) });
-            }
-        }
-        // Pajak
-        if (pajak) {
-            const d = new Date(pajak + 'T00:00:00');
-            if (!isNaN(d.getTime()) && (d.getMonth() + 1) === bulan && d.getFullYear() === tahun) {
-                const days = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
-                items.push({ noPol, merk, jenis, tanggal: pajak, tipe: 'Pajak', days, status: getStatusBadge(days) });
-            }
-        }
-    });
-    
-    items.sort((a, b) => a.days - b.days);
-    
-    if (items.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">Tidak ada jatuh tempo di bulan ini</td></tr>';
-        return;
-    }
-    
-    items.forEach((item, idx) => {
-        const badge = item.status;
-        const daysClass = item.days <= 0 ? 'text-danger fw-bold' : item.days <= 30 ? 'text-warning fw-bold' : '';
-        const daysText = item.days <= 0 ? `Terlambat ${Math.abs(item.days)} hari` : `${item.days} hari`;
-        tbody.innerHTML += `<tr>
-            <td>${idx + 1}</td>
-            <td><span class="license-plate">${item.noPol}</span></td>
-            <td>${item.merk}</td>
-            <td>${item.jenis}</td>
-            <td>${item.tanggal}</td>
-            <td><span class="badge bg-info">${item.tipe}</span></td>
-            <td class="${daysClass}">${daysText}</td>
-            <td>${badge}</td>
-        </tr>`;
-    });
-}
-
-function getStatusBadge(days) {
-    if (days <= 0) return '<span class="badge bg-danger">Kadaluarsa</span>';
-    if (days <= 30) return '<span class="badge" style="background: #ff6b35;">Prioritas</span>';
-    if (days <= 90) return '<span class="badge bg-warning text-dark">Perhatian</span>';
-    return '<span class="badge bg-success">Aman</span>';
-}

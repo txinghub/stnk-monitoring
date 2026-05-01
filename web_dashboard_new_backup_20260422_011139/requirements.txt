@@ -1,2 +1,0 @@
-# Python requirements for STNK Monitoring Dashboard
-# No external dependencies needed for basic server

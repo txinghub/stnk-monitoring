@@ -1,79 +1,82 @@
 #!/usr/bin/env python3
-"""Simple HTTP server for STNK dashboard on port 8099 - with auto date recalculation"""
+"""Simple HTTP server for STNK dashboard on port 8099"""
 
 import json
 import os
-from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime, date
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 PORT = 8099
 DATA_FILE = "data.json"
 
-def get_status(days):
-    """Determine status based on days remaining"""
-    if days is None or days == 9999:
-        return "unknown"
-    if days <= 0:
-        return "expired"
-    if days <= 7:
-        return "priority"
-    if days <= 30:
-        return "warning"
-    return "safe"
-
-def recalculate_days(data):
-    """Recalculate days remaining for each vehicle based on today's date"""
-    today = date.today()
-    for item in data:
-        stnk_str = item.get('STNK', '') or ''
-        pajak_str = item.get('PAJAK', '') or ''
-        
-        stnk_days = 9999
-        pajak_days = 9999
-        
-        if stnk_str:
-            try:
-                stnk_date = datetime.strptime(stnk_str, '%Y-%m-%d').date()
-                stnk_days = (stnk_date - today).days
-            except:
-                stnk_days = 9999
-        
-        if pajak_str:
-            try:
-                pajak_date = datetime.strptime(pajak_str, '%Y-%m-%d').date()
-                pajak_days = (pajak_date - today).days
-            except:
-                pajak_days = 9999
-        
-        item['stnk_days'] = stnk_days
-        item['pajak_days'] = pajak_days
-        item['days_to_expiry'] = min(stnk_days, pajak_days)
-        item['HARI_TERSISA'] = min(stnk_days, pajak_days)
-        item['status'] = get_status(item['days_to_expiry'])
-    
-    return data
-
 class SimpleDashboardHandler(BaseHTTPRequestHandler):
     """Simple HTTP request handler for dashboard"""
+    
+    def calculate_days(self, date_str):
+        """Calculate days from today to given date"""
+        if not date_str:
+            return 9999  # Far future if no date
+        try:
+            target_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            return (target_date - date.today()).days  # Can be negative
+        except ValueError:
+            return 9999
+    
+    def calculate_status(self, days):
+        """Calculate status based on days to expiry"""
+        if days <= 0:
+            return 'expired'
+        elif days <= 30:
+            return 'priority'
+        elif days <= 90:
+            return 'warning'
+        else:
+            return 'safe'
+    
+    def enrich_data(self, data):
+        """Enrich raw data with real-time calculated days"""
+        enriched = []
+        for vehicle in data:
+            stnk_days = self.calculate_days(vehicle.get('STNK', ''))
+            pajak_days = self.calculate_days(vehicle.get('PAJAK', ''))
+            days_to_expiry = min(stnk_days, pajak_days)
+            
+            enriched.append({
+                **vehicle,
+                'stnk_days': stnk_days,
+                'pajak_days': pajak_days,
+                'days_to_expiry': days_to_expiry,
+                'status': self.calculate_status(days_to_expiry)
+            })
+        return enriched
     
     def do_GET(self):
         """Handle GET requests"""
         try:
             path = self.path
             
-            # API endpoint for data - with auto recalculation
-            if path == '/api/data':
+            # API endpoint for real-time enriched data
+            if path == '/api/enriched':
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 
-                # Read and recalculate days
                 with open(DATA_FILE, 'r', encoding='utf-8') as f:
                     data = json.load(f)
+                enriched = self.enrich_data(data)
+                self.wfile.write(json.dumps(enriched, ensure_ascii=False, indent=2).encode('utf-8'))
+            
+            # API endpoint for raw data (backwards compat)
+            elif path == '/api/data':
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
                 
-                data = recalculate_days(data)
-                self.wfile.write(json.dumps(data, ensure_ascii=False).encode('utf-8'))
+                with open(DATA_FILE, 'r', encoding='utf-8') as f:
+                    data = f.read()
+                self.wfile.write(data.encode('utf-8'))
                 
             # Serve index.html
             elif path == '/' or path == '/index.html':
@@ -122,10 +125,8 @@ def main():
     print(f"Serving from: {os.getcwd()}")
     print(f"Data file: {DATA_FILE}")
     
-    # Listen on localhost (Tailscale Serve handles external access)
     server_address = ('127.0.0.1', PORT)
     httpd = HTTPServer(server_address, SimpleDashboardHandler)
-    httpd.allow_reuse_address = True
     
     print(f"Server started at http://localhost:{PORT}")
     print("Press Ctrl+C to stop")

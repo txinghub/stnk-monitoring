@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - STNK Monitoring</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #22d3ee;
+            --accent2: #f472b6;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #030712;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(34, 211, 238, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(244, 114, 182, 0.08) 0%, transparent 40%);
+            animation: bgRotate 30s linear infinite;
+        }
+
+        @keyframes bgRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            bottom: -50px;
+            right: -50px;
+            animation-delay: -5s;
+        }
+
+        .orb-3 {
+            width: 200px;
+            height: 200px;
+            background: var(--accent2);
+            top: 50%;
+            left: 50%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 30px) scale(1.02); }
+        }
+
+        /* Grid pattern */
+        .grid-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: 1;
+        }
+
+        /* Login Container */
+        .login-container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 420px;
+            padding: 1rem;
+        }
+
+        /* Glass Card */
+        .login-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            animation: cardAppear 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes cardAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.96);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .card-header-section {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(34, 211, 238, 0.1) 50%, rgba(244, 114, 182, 0.1) 100%);
+            padding: 2.5rem 2rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        }
+
+        .logo-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.25rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 10px 40px rgba(99, 102, 241, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .logo-container i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .login-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        .card-body-section {
+            padding: 2rem 2.5rem 1rem;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            transition: color 0.3s;
+            z-index: 2;
+        }
+
+        .form-control {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: var(--text-primary);
+            padding: 0.875rem 1rem 0.875rem 2.75rem;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .form-control::placeholder {
+            color: rgba(148, 163, 184, 0.5);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 
+                0 0 0 3px rgba(99, 102, 241, 0.15),
+                0 0 20px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-control:focus + .input-icon,
+        .input-wrapper:hover .input-icon {
+            color: var(--primary);
+        }
+
+        /* Error */
+        .error-message {
+            color: #f87171;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            background: rgba(248, 113, 113, 0.1);
+            border-radius: 8px;
+            border-left: 3px solid #f87171;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-submit:hover::before {
+            left: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-submit .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        .btn-submit.loading .spinner {
+            display: block;
+        }
+
+        .btn-submit.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Logged In State */
+        .logged-in-card {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .user-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--accent2) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 10px 40px rgba(99, 102, 241, 0.4),
+                0 0 0 4px rgba(255, 255, 255, 0.1);
+            animation: avatarPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes avatarPulse {
+            0%, 100% { box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4), 0 0 0 4px rgba(255, 255, 255, 0.1); }
+            50% { box-shadow: 0 10px 50px rgba(99, 102, 241, 0.5), 0 0 0 8px rgba(255, 255, 255, 0.05); }
+        }
+
+        .user-avatar i {
+            font-size: 3rem;
+            color: white;
+        }
+
+        .user-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .user-role-badge {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 20px;
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2rem;
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 0.875rem;
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            border-radius: 12px;
+            color: #f87171;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-logout:hover {
+            background: rgba(248, 113, 113, 0.2);
+            border-color: rgba(248, 113, 113, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .login-footer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 0.35rem;
+            padding: 0.35rem 0 0.15rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 0.1rem;
+        }
+
+        .login-footer p {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            margin: 0;
+            text-align: center;
+        }
+
+        .login-footer .version {
+            font-size: 0.7rem;
+            color: rgba(148, 163, 184, 0.6);
+        }
+
+        .login-footer a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .login-footer a:hover {
+            color: var(--primary);
+        }
+
+        /* Credentials hint */
+        .credentials-hint {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .credentials-hint-title {
+            color: var(--accent);
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .credentials-hint-title i {
+            font-size: 0.8rem;
+        }
+
+        .credentials-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .credential-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .credential-item code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .card-body-section {
+                padding: 1.5rem;
+            }
+            .login-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="bg-animation">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="grid-pattern"></div>
+
+    <!-- Login Card -->
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Header -->
+            <div class="card-header-section">
+                <div class="logo-container">
+                    <i class="bi bi-car-front-fill"></i>
+                </div>
+                <h1 class="login-title">STNK & PAJAK Monitor</h1>
+                <p class="login-subtitle">Sistem Monitoring Kendaraan Bermotor</p>
+            </div>
+
+            <!-- Login Form -->
+            <div class="card-body-section" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" class="form-control" id="username" placeholder="Masukkan username" autocomplete="off">
+                        <i class="bi bi-person input-icon"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" class="form-control" id="password" placeholder="Masukkan password" autocomplete="off">
+                        <i class="bi bi-lock input-icon"></i>
+                    </div>
+                </div>
+
+                <div class="error-message" id="error">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span id="errorText"></span>
+                </div>
+
+                <button class="btn-submit" id="submitBtn" onclick="handleLogin()">
+                    <span class="spinner"></span>
+                    <span class="btn-text"><i class="bi bi-box-arrow-in-right"></i> Masuk</span>
+                </button>
+            </div>
+
+            <!-- Logged In State -->
+            <div class="card-body-section logged-in-card" id="loggedIn" style="display: none;">
+                <div class="user-avatar">
+                    <i class="bi bi-person-fill"></i>
+                </div>
+                <div class="user-name" id="displayName">User</div>
+                <div class="user-role-badge" id="userRole">Administrator</div>
+                <button class="btn-logout" onclick="handleLogout()">
+                    <i class="bi bi-box-arrow-right"></i> Keluar
+                </button>
+            </div>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <p>Design & Development by <a href="#">txing</a> dan <a href="#">小甜甜</a></p>
+                <p class="version">STNK Monitoring System v2.0</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = '';
+
+        // Handle Enter key
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('password').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleLogin();
+            });
+        });
+
+        async function handleLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('submitBtn');
+            const error = document.getElementById('error');
+            const errorText = document.getElementById('errorText');
+
+            if (!username || !password) {
+                errorText.textContent = 'Username dan password harus diisi';
+                error.classList.add('show');
+                return;
+            }
+
+            btn.classList.add('loading');
+            btn.disabled = true;
+            error.classList.remove('show');
+
+            try {
+                const res = await fetch(API + '/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    showLoggedIn(data.user);
+                } else {
+                    errorText.textContent = data.error || 'Login gagal';
+                    error.classList.add('show');
+                }
+            } catch (e) {
+                errorText.textContent = 'Koneksi gagal - server tidak respond';
+                error.classList.add('show');
+            }
+
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+
+        function showLoggedIn(user) {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('loggedIn').style.display = 'block';
+            document.getElementById('displayName').textContent = user.display_name || user.username;
+            document.getElementById('userRole').textContent = user.role === 'admin' ? 'Administrator' : 'User Biasa';
+            // Redirect to dashboard after short delay
+            setTimeout(() => {
+                window.location.href = '/index_admin.html';
+            }, 500);
+        }
+
+        async function handleLogout() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    await fetch(API + '/api/logout', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                } catch (e) {}
+            }
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('loggedIn').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Check if already logged in
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        if (token && user) {
+            showLoggedIn(JSON.parse(user));
+        }
+    </script>
+</body>
+</html>
