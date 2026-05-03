@@ -608,7 +608,7 @@
     </div>
 
     <script>
-        const API = '';
+        const API = '/stnk';
 
         // Handle Enter key
         document.addEventListener('DOMContentLoaded', () => {
@@ -667,7 +667,7 @@
             document.getElementById('userRole').textContent = user.role === 'admin' ? 'Administrator' : 'User Biasa';
             // Redirect to dashboard after short delay
             setTimeout(() => {
-                window.location.href = '/index_admin.html';
+                window.location.href = '/stnk/index_admin.html';
             }, 500);
         }
 

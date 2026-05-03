@@ -944,7 +944,7 @@
     
     <script>
         // Configuration
-        const API_BASE = '/api';
+        const API_BASE = '/stnk/api';
         const REFRESH_INTERVAL = 60000;
         
         // State
@@ -978,7 +978,7 @@
         // Auth Check
         async function checkAuth() {
             if (!token) {
-                window.location.href = 'login.html';
+                window.location.href = '/stnk/login.html';
                 return;
             }
             try {
@@ -1107,7 +1107,7 @@
             token = null;
             currentUser = null;
             localStorage.removeItem('token');
-            window.location.href = 'login.html';
+            window.location.href = '/stnk/login.html';
         }
         
         // Fetch Data
