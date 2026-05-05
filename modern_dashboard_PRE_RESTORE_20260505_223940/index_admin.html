@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STNK & PAJAK MONITORING - Modern Dashboard</title>
+    
+    <!-- Bootstrap 5 Dark Theme -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.bootstrap5.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --danger-gradient: linear-gradient(135deg, #ff0844 0%, #ffb199 100%);
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --sidebar-bg: #111827;
+        }
+        
+        body {
+            background: var(--dark-bg);
+            color: #e2e8f0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: var(--sidebar-bg);
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            padding: 20px 0;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .sidebar.show {
+            display: block;
+        }
+        
+        .sidebar-logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 15px 25px;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .nav-link {
+            padding: 12px 25px;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            border-left-color: #667eea;
+        }
+        
+        .nav-link i {
+            width: 25px;
+            font-size: 1.1rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 25px;
+            min-height: 100vh;
+        }
+        
+        /* Dashboard Header */
+        .dashboard-header {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background: var(--primary-gradient);
+            opacity: 0.1;
+            border-radius: 0 16px 16px 0;
+        }
+        
+        .dashboard-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .dashboard-header p {
+            margin: 5px 0 0;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+        
+        /* Stat Cards */
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        
+        .stat-card.primary::before { background: var(--primary-gradient); }
+        .stat-card.success::before { background: var(--success-gradient); }
+        .stat-card.warning::before { background: var(--warning-gradient); }
+        .stat-card.danger::before { background: var(--danger-gradient); }
+        
+        .stat-card .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .stat-card .label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-card.small {
+            padding: 15px;
+        }
+        
+        .stat-card.small .number {
+            font-size: 1.5rem;
+        }
+        
+        .stat-card.small .icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        /* Chart Container */
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 550px;
+            overflow-y: auto;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #e2e8f0;
+        }
+
+        .chart-title small {
+            color: #64748b;
+            font-weight: normal;
+        }
+
+        /* NEW: Circular Progress Cards */
+        .progress-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .progress-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .progress-ring-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring-bg {
+            fill: none;
+            stroke: rgba(255,255,255,0.1);
+            stroke-width: 8;
+        }
+
+        .progress-ring-fill {
+            fill: none;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .progress-ring-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .progress-ring-days {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .progress-ring-label {
+            font-size: 0.6rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .progress-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .progress-info .plate {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .progress-info .merk {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-container {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease-out;
+        }
+
+        .progress-status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        .progress-status-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .progress-status-badge.expired {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+
+        .progress-status-badge.warning {
+            background: rgba(250, 112, 154, 0.2);
+            color: #fa709a;
+        }
+
+        .progress-status-badge.safe {
+            background: rgba(67, 233, 123, 0.2);
+            color: #43e97b;
+        }
+
+        .progress-expire-date {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            font-size: 1.2rem;
+        }
+
+        .section-count {
+            font-size: 0.8rem;
+            color: #64748b;
+            background: rgba(255,255,255,0.05);
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .status-group {
+            margin-bottom: 30px;
+        }
+
+        .status-group-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-group-title.expired { color: #ff6b6b; }
+        .status-group-title.warning { color: #fa709a; }
+        .status-group-title.safe { color: #43e97b; }
+
+        .count-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+        }
+        
+        /* Table Container */
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        /* User Section */
+        .user-section {
+            position: fixed;
+            top: 15px;
+            right: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 999;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .user-info {
+            text-align: right;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .user-role {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+        
+        /* Badges */
+        .badge-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-valid {
+            background: rgba(67, 233, 123, 0.2);
+            color: #43e97b;
+        }
+        
+        .badge-warning {
+            background: rgba(250, 176, 64, 0.2);
+            color: #fab340;
+        }
+        
+        .badge-expired {
+            background: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+        }
+        
+        /* Action Buttons */
+        .btn-action {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+        
+        /* Modal */
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .modal-footer {
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        /* Footer */
+        .login-footer {
+            text-align: center;
+            padding: 15px;
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                min-height: auto;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="loginSection" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;">
+        <div class="login-box" style="width: 100%; max-width: 400px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="font-size: 3rem; margin-bottom: 10px;">🚗</div>
+                <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 5px;">STNK Monitor</h1>
+                <p class="login-subtitle" style="opacity: 0.8;">Login untuk mengakses dashboard</p>
+            </div>
+            
+            <div class="card" style="background: var(--card-bg); border-radius: 16px; padding: 30px;">
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="loginUsername" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="loginUsername" required placeholder="Masukkan username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="loginPassword" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="loginPassword" required placeholder="Masukkan password">
+                    </div>
+                    <div id="loginError" style="color: #ff6b6b; font-size: 0.85rem; margin-bottom: 10px; display: none;"></div>
+                    <button type="submit" class="btn btn-primary w-100" id="loginBtn">
+                        <span id="loginBtnText">Login</span>
+                        <span id="loginSpinner" style="display: none;">
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                            Loading...
+                        </span>
+                    </button>
+                </form>
+            </div>
+            
+            <div class="login-footer">
+                Design & Development by txing and 小甜甜
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar" style="display:none;">
+        <div class="sidebar-logo">🚗 STNK Monitor</div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="#" onclick="showSection('dashboard')">
+                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showSection('vehicles')">
+                    <i class="bi bi-car-front me-2"></i>Data Kendaraan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" onclick="showSection('users')">
+                    <i class="bi bi-people me-2"></i>User Management
+                </a>
+            </li>
+            <li class="nav-item" style="margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                <a class="nav-link" href="#" onclick="logout()">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <!-- User Info (shown after login) -->
+    <div class="user-section" id="userSection" style="display:none;">
+        <div class="user-info">
+            <div class="user-name" id="userName">-</div>
+            <div class="user-role" id="userRole">-</div>
+        </div>
+        <div class="user-avatar" id="userAvatar">-</div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent" style="display:none;">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header" data-aos="fade-up">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1><i class="bi bi-car-front-fill me-2"></i>STNK & PAJAK MONITORING</h1>
+                    <p>Dashboard monitoring expired STNK dan Pajak Kendaraan</p>
+                </div>
+                <div class="text-end">
+                    <div style="font-size: 0.85rem; opacity: 0.9;">
+                        <i class="bi bi-calendar3"></i> <span id="currentDate"></span>
+                    </div>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">
+                        <i class="bi bi-clock"></i> <span id="currentTime"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Section -->
+        <div id="dashboardSection">
+            <!-- Stats Cards -->
+            <div class="row g-3 mb-3">
+                <div class="col-6 col-md-3">
+                    <div class="stat-card primary small" data-aos="fade-up" data-aos-delay="100">
+                        <div class="icon">🚗</div>
+                        <div class="number" id="totalVehicles">-</div>
+                        <div class="label">Total</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card success small" data-aos="fade-up" data-aos-delay="150">
+                        <div class="icon">✅</div>
+                        <div class="number" id="validStnk">-</div>
+                        <div class="label">STNK Valid</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card warning small" data-aos="fade-up" data-aos-delay="200">
+                        <div class="icon">⚠️</div>
+                        <div class="number" id="expirySoon">-</div>
+                        <div class="label">Akan Expired</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-card danger small" data-aos="fade-up" data-aos-delay="250">
+                        <div class="icon">❌</div>
+                        <div class="number" id="expiredStnk">-</div>
+                        <div class="label">STNK Expired</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NEW: Circular Progress Dashboard -->
+            <div class="row g-4 mb-4" id="circularDashboard">
+                <div class="col-lg-6">
+                    <div class="chart-container" data-aos="fade-up" data-aos-delay="200">
+                        <div class="section-header">
+                            <div class="section-title"><i class="bi bi-car-front"></i>Sisa Hari STNK <small id="stnkTotal"></small></div>
+                        </div>
+                        <div id="stnkProgressCards"></div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="chart-container" data-aos="fade-up" data-aos-delay="250">
+                        <div class="section-header">
+                            <div class="section-title"><i class="bi bi-receipt"></i>Sisa Hari PAJAK <small id="pajakTotal"></small></div>
+                        </div>
+                        <div id="pajakProgressCards"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Data Kendaraan Section -->
+        <div id="vehiclesSection" style="display:none;">
+            <div class="table-container" data-aos="fade-up" data-aos-delay="300">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5><i class="bi bi-table me-2"></i>Data Kendaraan</h5>
+                    <button class="btn btn-primary btn-sm" onclick="showAddModal()">
+                        <i class="bi bi-plus-lg"></i> Tambah
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table id="vehicleTable" class="table table-dark table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>No. Polisi</th>
+                                <th>Merk</th>
+                                <th>Jenis</th>
+                                <th>KTP</th>
+                                <th>Exp STNK</th>
+                                <th>Status STNK</th>
+                                <th>Exp Pajak</th>
+                                <th>Status Pajak</th>
+                                <th>Sisa Tahun STNK</th>
+                                <th>Sisa Hari PAJAK</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vehicleTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- User Management Section -->
+        <div id="usersSection" style="display:none;">
+            <div class="table-container" data-aos="fade-up" data-aos-delay="300">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5><i class="bi bi-people me-2"></i>User Management</h5>
+                    <button class="btn btn-primary btn-sm" onclick="showAddUserModal()">
+                        <i class="bi bi-person-plus"></i> Tambah User
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table id="usersTable" class="table table-dark table-hover" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Username</th>
+                                <th>Display Name</th>
+                                <th>Role</th>
+                                <th>Created</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addModalLabel">
+                        <i class="bi bi-plus-circle me-2"></i>
+                        Tambah Kendaraan Baru
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Sistem akan membuat backup otomatis sebelum menambah data.
+                    </div>
+                    <form id="addForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="addMerk" class="form-label">Merk *</label>
+                                <input type="text" class="form-control" id="addMerk" required placeholder="Contoh: HONDA, TOYOTA">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="addNoPolisi" class="form-label">No Polisi *</label>
+                                <input type="text" class="form-control" id="addNoPolisi" required placeholder="Contoh: BK 1234 ABC">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="addJenis" class="form-label">Jenis</label>
+                                <select class="form-control" id="addJenis">
+                                    <option value="">Pilih Jumlah Roda</option>
+                                    <option value="Roda 2">Roda 2</option>
+                                    <option value="Roda 3">Roda 3</option>
+                                    <option value="Roda 4">Roda 4</option>
+                                    <option value="Roda 6">Roda 6</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="addKtp" class="form-label">Nama KTP</label>
+                                <input type="text" class="form-control" id="addKtp" placeholder="Nama sesuai KTP">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="addStnkExp" class="form-label">Exp STNK *</label>
+                                <input type="date" class="form-control" id="addStnkExp" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="addPajakExp" class="form-label">Exp Pajak *</label>
+                                <input type="date" class="form-control" id="addPajakExp" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="handleAdd()">
+                        <i class="bi bi-check-lg me-2"></i>Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">
+                        <i class="bi bi-pencil me-2"></i>
+                        Edit Kendaraan
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm">
+                        <input type="hidden" id="editId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editMerk" class="form-label">Merk *</label>
+                                <input type="text" class="form-control" id="editMerk" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editNoPolisi" class="form-label">No Polisi *</label>
+                                <input type="text" class="form-control" id="editNoPolisi" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="editJenis" class="form-label">Jenis</label>
+                                <select class="form-control" id="editJenis">
+                                    <option value="">Pilih Jumlah Roda</option>
+                                    <option value="Roda 2">Roda 2</option>
+                                    <option value="Roda 3">Roda 3</option>
+                                    <option value="Roda 4">Roda 4</option>
+                                    <option value="Roda 6">Roda 6</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="editKtp" class="form-label">Nama KTP</label>
+                                <input type="text" class="form-control" id="editKtp" placeholder="Nama sesuai KTP">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="editStnkExp" class="form-label">Exp STNK *</label>
+                                <input type="date" class="form-control" id="editStnkExp" required>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="editPajakExp" class="form-label">Exp Pajak *</label>
+                                <input type="date" class="form-control" id="editPajakExp" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="handleUpdate()">
+                        <i class="bi bi-check-lg me-2"></i>Update
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle text-danger me-2"></i>
+                        Konfirmasi Hapus
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin menghapus kendaraan <strong id="deleteNoPolisi"></strong>?</p>
+                    <p class="text-muted small">Tindakan ini tidak dapat dibatalkan.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn" onclick="handleDelete()">
+                        <i class="bi bi-trash me-2"></i>Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add User Modal -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLabel">
+                        <i class="bi bi-person-plus me-2"></i>
+                        Tambah User Baru
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm">
+                        <div class="mb-3">
+                            <label for="newUsername" class="form-label">Username *</label>
+                            <input type="text" class="form-control" id="newUsername" required placeholder="Masukkan username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newDisplayName" class="form-label">Display Name</label>
+                            <input type="text" class="form-control" id="newDisplayName" placeholder="Nama tampilan">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">Password *</label>
+                            <input type="password" class="form-control" id="newPassword" required placeholder="Masukkan password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newRole" class="form-label">Role *</label>
+                            <select class="form-control" id="newRole" required>
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" onclick="handleAddUser()">
+                        <i class="bi bi-check-lg me-2"></i>Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Delete User Modal -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteUserModalLabel">
+                        <i class="bi bi-exclamation-triangle text-danger me-2"></i>
+                        Konfirmasi Hapus User
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Apakah Anda yakin ingin menghapus user <strong id="deleteUsername"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteUserBtn" onclick="handleDeleteUser()">
+                        <i class="bi bi-trash me-2"></i>Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Configuration
+        const API_BASE = '/stnk/api';
+        const REFRESH_INTERVAL = 60000;
+        
+        // State
+        let currentUser = null;
+        let token = localStorage.getItem('token');
+        let dataTable = null;
+        let stnkDaysChart = null;
+        let pajakDaysChart = null;
+        let deleteId = null;
+        let deleteUserId = null;
+        
+        // AOS Init
+        AOS.init();
+        
+        // Date/Time
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('currentTime').textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+        
+        // API Fetch with Auth
+        async function apiFetch(url, options = {}) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+            return fetch(url, { ...options, headers });
+        }
+        
+        // Auth Check
+        async function checkAuth() {
+            if (!token) {
+                window.location.href = '/stnk/login.html';
+                return;
+            }
+            try {
+                const response = await apiFetch(`${API_BASE}/verify`);
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    showDashboard();
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+                logout();
+            }
+        }
+        
+        // Show Login
+        function showLogin() {
+            document.getElementById('loginSection').style.display = 'flex';
+            document.getElementById('sidebar').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('userSection').style.display = 'none';
+        }
+        
+        // Show Dashboard
+        function showDashboard() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('sidebar').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('userSection').style.display = 'flex';
+            
+            if (currentUser) {
+                document.getElementById('userName').textContent = currentUser.display_name || currentUser.username;
+                document.getElementById('userRole').textContent = currentUser.role.toUpperCase();
+                document.getElementById('userAvatar').textContent = (currentUser.display_name || currentUser.username).charAt(0).toUpperCase();
+                
+                // Hide User Management for non-admin
+                if (currentUser.role !== 'admin') {
+                    document.querySelectorAll('.nav-link').forEach(link => {
+                        if (link.textContent.includes('User Management')) {
+                            link.style.display = 'none';
+                        }
+                    });
+                    // Hide Tambah button
+                    const addBtns = document.querySelectorAll('button[onclick="showAddModal()"]');
+                    addBtns.forEach(btn => btn.style.display = 'none');
+                }
+                
+                // Call hideActionButtons after a short delay to ensure DataTable is ready
+                setTimeout(hideActionButtonsForNonAdmin, 100);
+            }
+            
+            fetchData();
+            setInterval(fetchData, REFRESH_INTERVAL);
+        }
+        
+        // Hide action buttons for non-admin users
+        function hideActionButtonsForNonAdmin() {
+            if (currentUser && currentUser.role !== 'admin') {
+                // Hide in static table
+                document.querySelectorAll('.action-buttons').forEach(td => td.style.display = 'none');
+                // Hide action column in DataTable (last column)
+                if (dataTable) {
+                    dataTable.columns(-1).nodes().flatten().forEach(td => td.style.display = 'none');
+                }
+                // Hide ALL btn-action buttons everywhere (Edit & Delete)
+                document.querySelectorAll('.btn-action').forEach(btn => btn.style.display = 'none');
+                // Hide "Tambah Kendaraan" buttons
+                document.querySelectorAll('button[onclick="showAddModal()"]').forEach(btn => btn.style.display = 'none');
+                // Hide User Management nav link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    if (link.textContent.includes('User Management')) {
+                        link.style.display = 'none';
+                    }
+                });
+            }
+        }
+        
+        // Login Handler
+        async function handleLogin(e) {
+            e.preventDefault();
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+            const loginSpinner = document.getElementById('loginSpinner');
+            const loginError = document.getElementById('loginError');
+            
+            loginBtn.disabled = true;
+            loginBtnText.style.display = 'none';
+            loginSpinner.style.display = 'inline';
+            loginError.style.display = 'none';
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    token = data.token;
+                    localStorage.setItem('token', token);
+                    currentUser = data.user;
+                    showDashboard();
+                } else {
+                    loginError.textContent = data.error || 'Login failed';
+                    loginError.style.display = 'block';
+                }
+            } catch (error) {
+                loginError.textContent = 'Connection error. Please try again.';
+                loginError.style.display = 'block';
+            }
+            
+            loginBtn.disabled = false;
+            loginBtnText.style.display = 'inline';
+            loginSpinner.style.display = 'none';
+        }
+        
+        // Logout
+        function logout() {
+            token = null;
+            currentUser = null;
+            localStorage.removeItem('token');
+            window.location.href = '/stnk/login.html';
+        }
+        
+        // Fetch Data
+        async function fetchData() {
+            try {
+                const response = await apiFetch(`${API_BASE}/vehicles`);
+                if (response.ok) {
+                    const vehicles = await response.json();
+                    updateStats(vehicles);
+                    updateCharts(vehicles);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        
+        // Update Stats
+        function updateStats(vehicles) {
+            const total = vehicles.length;
+            const validStnk = vehicles.filter(v => v.stnk_status === 'valid').length;
+            const expirySoon = vehicles.filter(v => v.stnk_status === 'expiry_soon').length;
+            const expiredStnk = vehicles.filter(v => v.stnk_status === 'expired').length;
+            
+            document.getElementById('totalVehicles').textContent = total;
+            document.getElementById('validStnk').textContent = validStnk;
+            document.getElementById('expirySoon').textContent = expirySoon;
+            document.getElementById('expiredStnk').textContent = expiredStnk;
+        }
+        
+        // Update Charts - Circular Progress Cards
+        function updateCharts(vehicles) {
+            const RADIUS = 34;
+            const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+            // Helper: get status class and color
+            function getStnkStatus(days) {
+                if (days <= 0) return { cls: 'expired', color: '#ff6b6b', gradient: '#ff6b6b' };
+                if (days <= 365) return { cls: 'warning', color: '#fa709a', gradient: '#fa709a' };
+                return { cls: 'safe', color: '#43e97b', gradient: '#43e97b' };
+            }
+
+            function getPajakStatus(days) {
+                if (days <= 0) return { cls: 'expired', color: '#ff6b6b', gradient: '#ff6b6b' };
+                if (days <= 30) return { cls: 'warning', color: '#fa709a', gradient: '#fa709a' };
+                return { cls: 'safe', color: '#43e97b', gradient: '#43e97b' };
+            }
+
+            // Helper: format days to readable
+            function formatDays(days, maxDays) {
+                if (days <= 0) return { text: 'Expired', percent: 0 };
+                const percent = Math.min(100, Math.round((days / maxDays) * 100));
+                if (maxDays === 1825) { // STNK 5 years
+                    const years = Math.floor(days / 365);
+                    const months = Math.floor((days % 365) / 30);
+                    const text = years > 0 ? `${years}thn ${months}bln` : `${months}bln`;
+                    return { text, percent };
+                } else { // PAJAK 1 year
+                    const months = Math.floor(days / 30);
+                    const d = days % 30;
+                    const text = months > 0 ? `${months}bln ${d}hr` : `${d}hr`;
+                    return { text, percent };
+                }
+            }
+
+            // Helper: format date
+            function formatDate(dateStr) {
+                if (!dateStr) return '-';
+                try {
+                    const d = new Date(dateStr);
+                    return d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                } catch { return dateStr; }
+            }
+
+            // Render STNK cards
+            let stnkHtml = '';
+            const expiredStnk = [], warningStnk = [], safeStnk = [];
+
+            vehicles.forEach(v => {
+                const days = v.stnk_days;
+                const status = getStnkStatus(days);
+                const info = formatDays(days, 1825);
+                const progress = days <= 0 ? 0 : Math.min(100, Math.round((days / 1825) * 100));
+                const offset = CIRCUMFERENCE - (progress / 100) * CIRCUMFERENCE;
+
+                const card = `
+                <div class="progress-card">
+                    <div class="progress-ring-container">
+                        <svg class="progress-ring" width="80" height="80">
+                            <circle class="progress-ring-bg" cx="40" cy="40" r="${RADIUS}"/>
+                            <circle class="progress-ring-fill" cx="40" cy="40" r="${RADIUS}"
+                                stroke="${status.color}"
+                                stroke-dasharray="${CIRCUMFERENCE}"
+                                stroke-dashoffset="${offset}"/>
+                        </svg>
+                        <div class="progress-ring-text">
+                            <div class="progress-ring-days">${info.text}</div>
+                            <div class="progress-ring-label">hari</div>
+                        </div>
+                    </div>
+                    <div class="progress-info">
+                        <div class="plate">${v['No.Polisi']}</div>
+                        <div class="merk">${v.MERK || v.merk || '-'} &bull; ${v.Jenis || v.jenis || '-'}</div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width:${progress}%; background:${status.color};"></div>
+                        </div>
+                        <div class="progress-status-row">
+                            <span class="progress-status-badge ${status.cls}">${status.cls === 'expired' ? 'Expired' : status.cls === 'warning' ? 'Akan Expired' : 'Valid'}</span>
+                            <span class="progress-expire-date">Exp: ${formatDate(v.STNK || v.stnk_exp)}</span>
+                        </div>
+                    </div>
+                </div>`;
+
+                if (days <= 0) expiredStnk.push(card);
+                else if (days <= 365) warningStnk.push(card);
+                else safeStnk.push(card);
+            });
+
+            // Build STNK section
+            stnkHtml = '';
+            if (expiredStnk.length) stnkHtml += `<div class="status-group"><div class="status-group-title expired"><i class="bi bi-x-circle"></i> Expired<span class="count-badge">${expiredStnk.length}</span></div>${expiredStnk.join('')}</div>`;
+            if (warningStnk.length) stnkHtml += `<div class="status-group"><div class="status-group-title warning"><i class="bi bi-exclamation-circle"></i> Akan Expired<span class="count-badge">${warningStnk.length}</span></div>${warningStnk.join('')}</div>`;
+            if (safeStnk.length) stnkHtml += `<div class="status-group"><div class="status-group-title safe"><i class="bi bi-check-circle"></i> Valid<span class="count-badge">${safeStnk.length}</span></div>${safeStnk.join('')}</div>`;
+            if (!stnkHtml) stnkHtml = '<div style="color:#64748b;text-align:center;padding:40px;">Tidak ada data</div>';
+
+            // Render PAJAK cards
+            let pajakHtml = '';
+            const expiredPajak = [], warningPajak = [], safePajak = [];
+
+            vehicles.forEach(v => {
+                const days = v.pajak_days;
+                const status = getPajakStatus(days);
+                const info = formatDays(days, 365);
+                const progress = days <= 0 ? 0 : Math.min(100, Math.round((days / 365) * 100));
+                const offset = CIRCUMFERENCE - (progress / 100) * CIRCUMFERENCE;
+
+                const card = `
+                <div class="progress-card">
+                    <div class="progress-ring-container">
+                        <svg class="progress-ring" width="80" height="80">
+                            <circle class="progress-ring-bg" cx="40" cy="40" r="${RADIUS}"/>
+                            <circle class="progress-ring-fill" cx="40" cy="40" r="${RADIUS}"
+                                stroke="${status.color}"
+                                stroke-dasharray="${CIRCUMFERENCE}"
+                                stroke-dashoffset="${offset}"/>
+                        </svg>
+                        <div class="progress-ring-text">
+                            <div class="progress-ring-days">${info.text}</div>
+                            <div class="progress-ring-label">hari</div>
+                        </div>
+                    </div>
+                    <div class="progress-info">
+                        <div class="plate">${v['No.Polisi']}</div>
+                        <div class="merk">${v.MERK || v.merk || '-'} &bull; ${v.Jenis || v.jenis || '-'}</div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-fill" style="width:${progress}%; background:${status.color};"></div>
+                        </div>
+                        <div class="progress-status-row">
+                            <span class="progress-status-badge ${status.cls}">${status.cls === 'expired' ? 'Expired' : status.cls === 'warning' ? 'Akan Expired' : 'Valid'}</span>
+                            <span class="progress-expire-date">Exp: ${formatDate(v.PAJAK || v.pajak_exp)}</span>
+                        </div>
+                    </div>
+                </div>`;
+
+                if (days <= 0) expiredPajak.push(card);
+                else if (days <= 30) warningPajak.push(card);
+                else safePajak.push(card);
+            });
+
+            // Build PAJAK section
+            pajakHtml = '';
+            if (expiredPajak.length) pajakHtml += `<div class="status-group"><div class="status-group-title expired"><i class="bi bi-x-circle"></i> Expired<span class="count-badge">${expiredPajak.length}</span></div>${expiredPajak.join('')}</div>`;
+            if (warningPajak.length) pajakHtml += `<div class="status-group"><div class="status-group-title warning"><i class="bi bi-exclamation-circle"></i> Akan Expired<span class="count-badge">${warningPajak.length}</span></div>${warningPajak.join('')}</div>`;
+            if (safePajak.length) pajakHtml += `<div class="status-group"><div class="status-group-title safe"><i class="bi bi-check-circle"></i> Valid<span class="count-badge">${safePajak.length}</span></div>${safePajak.join('')}</div>`;
+            if (!pajakHtml) pajakHtml = '<div style="color:#64748b;text-align:center;padding:40px;">Tidak ada data</div>';
+
+            document.getElementById('stnkProgressCards').innerHTML = stnkHtml;
+            document.getElementById('pajakProgressCards').innerHTML = pajakHtml;
+            document.getElementById('stnkTotal').textContent = `(${vehicles.length} kendaraan, masa 5 tahun)`;
+            document.getElementById('pajakTotal').textContent = `(${vehicles.length} kendaraan, masa 1 tahun)`;
+        }
+        
+        
+        // Update Table
+        function updateTable(vehicles) {
+            const tbody = document.getElementById('vehicleTableBody');
+            tbody.innerHTML = vehicles.map((v, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td><strong>${v['No.Polisi']}</strong></td>
+                    <td>${v.MERK || v.merk || '-'}</td>
+                    <td>${v.Jenis || v.jenis || '-'}</td>
+                    <td>${v.KTP || '-'}</td>
+                    <td>${formatDate(v.STNK || v.stnk_exp)}</td>
+                    <td>${getStatusBadge(v.stnk_status)}</td>
+                    <td>${formatDate(v.PAJAK || v.pajak_exp)}</td>
+                    <td>${getStatusBadge(v.pajak_status)}</td>
+                    <td>${v.stnk_days !== undefined ? (() => {
+                        const years = Math.floor(v.stnk_days / 365);
+                        const months = Math.round((v.stnk_days % 365) / 30);
+                        return years > 0 ? years + 'tahun ' + months + 'bulan' : months + 'bulan';
+                    })() : '-'}</td>
+                    <td>${v.pajak_days !== undefined ? (() => {
+                        const months = Math.floor(v.pajak_days / 30);
+                        const days = v.pajak_days % 30;
+                        return months > 0 ? months + 'bulan ' + days + 'hari' : days + 'hari';
+                    })() : '-'}</td>
+                    <td class="action-buttons">
+                        <button class="btn btn-sm btn-primary btn-action me-1" onclick="editVehicle(${v.id})" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger btn-action" onclick="confirmDelete(${v.id}, '${v['No.Polisi']}')" title="Hapus">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // Init DataTable if not already
+            if (!dataTable) {
+                dataTable = $('#vehicleTable').DataTable({
+                    responsive: true,
+                    pageLength: 10,
+                    lengthMenu: [10, 25, 50, 100],
+                    order: [[0, 'asc']],
+                    language: {
+                        search: "Cari:",
+                        lengthMenu: "Tampilkan _MENU_ data",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                        paginate: {
+                            first: "Pertama",
+                            last: "Terakhir",
+                            next: "Berikutnya",
+                            previous: "Sebelumnya"
+                        }
+                    }
+                });
+            } else {
+                dataTable.clear().draw();
+                vehicles.forEach((v, i) => {
+                    dataTable.row.add([
+                        i + 1,
+                        `<strong>${v['No.Polisi']}</strong>`,
+                        v.MERK || v.merk || '-',
+                        v.Jenis || v.jenis || '-',
+                        v.KTP || '-',
+                        formatDate(v.STNK || v.stnk_exp),
+                        getStatusBadge(v.stnk_status),
+                        formatDate(v.PAJAK || v.pajak_exp),
+                        getStatusBadge(v.pajak_status),
+                        v.stnk_days !== undefined ? (() => {
+                            const years = Math.floor(v.stnk_days / 365);
+                            const months = Math.round((v.stnk_days % 365) / 30);
+                            return years > 0 ? years + 'tahun ' + months + 'bulan' : months + 'bulan';
+                        })() : '-',
+                        v.pajak_days !== undefined ? (() => {
+                            const months = Math.floor(v.pajak_days / 30);
+                            const days = v.pajak_days % 30;
+                            return months > 0 ? months + 'bulan ' + days + 'hari' : days + 'hari';
+                        })() : '-',
+                        `<button class="btn btn-sm btn-primary btn-action me-1" onclick="editVehicle(${v.id})" title="Edit"><i class="bi bi-pencil"></i></button>
+                         <button class="btn btn-sm btn-danger btn-action" onclick="confirmDelete(${v.id}, '${v['No.Polisi']}')" title="Hapus"><i class="bi bi-trash"></i></button>`
+                    ]);
+                });
+                dataTable.draw();
+            }
+        }
+        
+        // Format Date
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+        
+        // Get Status Badge
+        function getStatusBadge(status) {
+            if (status === 'valid') return '<span class="badge-status badge-valid">Valid</span>';
+            if (status === 'expiry_soon') return '<span class="badge-status badge-warning">Akan Expired</span>';
+            if (status === 'expired') return '<span class="badge-status badge-expired">Expired</span>';
+            return '-';
+        }
+        
+        // Show Section
+        function showSection(section) {
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('vehiclesSection').style.display = 'none';
+            document.getElementById('usersSection').style.display = 'none';
+            
+            if (section === 'dashboard') {
+                document.getElementById('dashboardSection').style.display = 'block';
+            } else if (section === 'vehicles') {
+                document.getElementById('vehiclesSection').style.display = 'block';
+                loadVehicles();
+            } else if (section === 'users') {
+                document.getElementById('usersSection').style.display = 'block';
+                loadUsers();
+            }
+            
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        // Load Vehicles
+        async function loadVehicles() {
+            try {
+                const response = await apiFetch(`${API_BASE}/vehicles`);
+                if (response.ok) {
+                    const vehicles = await response.json();
+                    updateTable(vehicles);
+                }
+            } catch (error) {
+                console.error('Error loading vehicles:', error);
+            }
+        }
+        
+        // Show Add Modal
+        function showAddModal() {
+            document.getElementById('addForm').reset();
+            new bootstrap.Modal(document.getElementById('addModal')).show();
+        }
+        
+        // Handle Add
+        async function handleAdd() {
+            const merk = document.getElementById('addMerk').value;
+            const no_polisi = document.getElementById('addNoPolisi').value;
+            const jenis = document.getElementById('addJenis').value;
+            const ktp = document.getElementById('addKtp').value;
+            const stnk_exp = document.getElementById('addStnkExp').value;
+            const pajak_exp = document.getElementById('addPajakExp').value;
+            
+            if (!merk || !no_polisi || !stnk_exp || !pajak_exp) {
+                showToast('Mohon lengkapi semua field wajib', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await apiFetch(`${API_BASE}/add`, {
+                    method: 'POST',
+                    body: JSON.stringify({ merk, no_polisi, jenis, ktp, stnk_exp, pajak_exp })
+                });
+                
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('addModal')).hide();
+                    showToast('Kendaraan berhasil ditambahkan', 'success');
+                    loadVehicles();
+                    fetchData();
+                } else {
+                    const data = await response.json();
+                    showToast(data.error || 'Gagal menambah kendaraan', 'danger');
+                }
+            } catch (error) {
+                showToast('Connection error', 'danger');
+            }
+        }
+        
+        // Edit Vehicle
+        async function editVehicle(id) {
+            try {
+                const response = await apiFetch(`${API_BASE}/vehicles`);
+                if (response.ok) {
+                    const vehicles = await response.json();
+                    const vehicle = vehicles.find(v => v.id === id);
+                    if (vehicle) {
+                        document.getElementById('editId').value = vehicle.id;
+                        document.getElementById('editMerk').value = vehicle.MERK || vehicle.merk || '';
+                        document.getElementById('editNoPolisi').value = vehicle['No.Polisi'] || '';
+                        document.getElementById('editJenis').value = vehicle.Jenis || vehicle.jenis || '';
+                        document.getElementById('editKtp').value = vehicle.KTP || '';
+                        document.getElementById('editStnkExp').value = vehicle.STNK || vehicle.stnk_exp || '';
+                        document.getElementById('editPajakExp').value = vehicle.PAJAK || vehicle.pajak_exp || '';
+                        new bootstrap.Modal(document.getElementById('editModal')).show();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading vehicle:', error);
+            }
+        }
+        
+        // Handle Update
+        async function handleUpdate() {
+            const id = document.getElementById('editId').value;
+            const merk = document.getElementById('editMerk').value;
+            const no_polisi = document.getElementById('editNoPolisi').value;
+            const jenis = document.getElementById('editJenis').value;
+            const ktp = document.getElementById('editKtp').value;
+            const stnk_exp = document.getElementById('editStnkExp').value;
+            const pajak_exp = document.getElementById('editPajakExp').value;
+            
+            try {
+                const response = await apiFetch(`${API_BASE}/update`, {
+                    method: 'POST',
+                    body: JSON.stringify({ id, merk, no_polisi, jenis, ktp, stnk_exp, pajak_exp })
+                });
+                
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('editModal')).hide();
+                    showToast('Kendaraan berhasil diupdate', 'success');
+                    loadVehicles();
+                    fetchData();
+                } else {
+                    showToast('Gagal update kendaraan', 'danger');
+                }
+            } catch (error) {
+                showToast('Connection error', 'danger');
+            }
+        }
+        
+        // Confirm Delete
+        function confirmDelete(id, noPolisi) {
+            deleteId = id;
+            document.getElementById('deleteNoPolisi').textContent = noPolisi;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+        
+        // Handle Delete
+        async function handleDelete() {
+            if (!deleteId) return;
+            try {
+                const response = await apiFetch(`${API_BASE}/delete`, {
+                    method: 'POST',
+                    body: JSON.stringify({ id: deleteId })
+                });
+                
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+                    showToast('Kendaraan berhasil dihapus', 'success');
+                    deleteId = null;
+                    loadVehicles();
+                    fetchData();
+                } else {
+                    showToast('Gagal menghapus kendaraan', 'danger');
+                }
+            } catch (error) {
+                showToast('Connection error', 'danger');
+            }
+        }
+        
+        // User Management
+        async function loadUsers() {
+            try {
+                const response = await apiFetch(`${API_BASE}/users`);
+                if (response.ok) {
+                    const users = await response.json();
+                    renderUsersTable(users);
+                }
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+        
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = users.map((u, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td><strong>${u.username}</strong></td>
+                    <td>${u.display_name || '-'}</td>
+                    <td><span class="badge ${u.role === 'admin' ? 'badge-status badge-valid' : 'badge-status badge-warning'}">${u.role.toUpperCase()}</span></td>
+                    <td>${formatDate(u.created_at)}</td>
+                    <td>
+                        ${u.username !== 'admin' ? `
+                        <button class="btn btn-sm btn-danger btn-action" onclick="confirmDeleteUser(${u.id}, '${u.username}')" title="Hapus">
+                            <i class="bi bi-trash"></i>
+                        </button>` : '-'}
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function showAddUserModal() {
+            document.getElementById('addUserForm').reset();
+            new bootstrap.Modal(document.getElementById('addUserModal')).show();
+        }
+        
+        async function handleAddUser() {
+            const username = document.getElementById('newUsername').value;
+            const display_name = document.getElementById('newDisplayName').value;
+            const password = document.getElementById('newPassword').value;
+            const role = document.getElementById('newRole').value;
+            
+            if (!username || !password) {
+                showToast('Username dan password wajib diisi', 'danger');
+                return;
+            }
+            
+            try {
+                const response = await apiFetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    body: JSON.stringify({ username, display_name, password, role })
+                });
+                
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('addUserModal')).hide();
+                    showToast('User berhasil ditambahkan', 'success');
+                    loadUsers();
+                } else {
+                    const data = await response.json();
+                    showToast(data.error || 'Gagal menambah user', 'danger');
+                }
+            } catch (error) {
+                showToast('Connection error', 'danger');
+            }
+        }
+        
+        function confirmDeleteUser(id, username) {
+            deleteUserId = id;
+            document.getElementById('deleteUsername').textContent = username;
+            new bootstrap.Modal(document.getElementById('deleteUserModal')).show();
+        }
+        
+        async function handleDeleteUser() {
+            if (!deleteUserId) return;
+            try {
+                const response = await apiFetch(`${API_BASE}/users/${deleteUserId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    bootstrap.Modal.getInstance(document.getElementById('deleteUserModal')).hide();
+                    showToast('User berhasil dihapus', 'success');
+                    deleteUserId = null;
+                    loadUsers();
+                } else {
+                    showToast('Gagal menghapus user', 'danger');
+                }
+            } catch (error) {
+                showToast('Connection error', 'danger');
+            }
+        }
+        
+        // Toast
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.querySelector('.toast-body').textContent = message;
+            toast.className = `toast show bg-${type}`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        // Event Listeners
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+        
+        // Init
+        checkAuth();
+    </script>
+</body>
+</html>
